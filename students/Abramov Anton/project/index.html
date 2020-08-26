@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>js|Basket</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <script src='scripts.js'></script>
+</head>
+
+<body>
+    <div class="modal modalNone">
+        <button class="clearBtn btn">Очистить корзину</button>
+        <button class="backBtn btn">Закрыть</button>
+        <div class="modalBasket">
+            <div class="makeOrder">
+                <div class="sum">
+                    <span class="text textSum">Всего шаров</span><span class='cost spanInBasket quantityBasket'><span></span> шт.</span>
+                    <span class="text textSum">Итого</span><br><span class='cost spanInBasket costInBasket'><span></span> р.</span>
+                </div>
+                <div class="buy"><button type="button" class="btnBuy btn">Оформить заказ</button></div>
+            </div>
+            <table class='basketItemBox modalNone'>
+                <tr>
+                    <td class="basketImg"><img src="./images/obshar_blue.jpg" alt=""></td>
+                    <td class="basketInfoItem">
+                        <div class="basketFixBox">
+                            <h3 class="text textInBasket">Разноцветные шарики прозрачные</h3>
+                            <div><span class='quantity' style="top: auto;">Шаров в комлекте: <span class="quanBasket">1</span></span>
+                            </div>
+                            <div style="margin-top: 4.5%;">
+                                <button class="minus" type="button">-</button>
+                                <input class="countInput" type="number" step="1" min="1" value="1" title="Кол-во" size="4" style="display:inline-block;">
+                                <button class="plus" type="button" style="font-size: 15px;">+</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="basketControlBox">
+                        <div class="basketRemove"><span class="close"></span></div>
+                        <div class="basketCost">
+                            <span class='cost costBasket' style="font-size: 30px; padding-top: 15%;"><span class="priceBasket">25</span> р.</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="overlay modalNone"></div>
+    <div class="container">
+        <div class="menu">
+            <div class="menuBasket"><img src="./images/basket.png" alt="Корзина"> <span>0</span></div>
+        </div>
+        <div class="boxShops">
+            <div class="itemBox">
+                <div class="thisInfoItem">
+                    <div class="imgBox">
+                        <div class="imgCard front"><img src="./images/rshar_proz.jpg" alt="Разноцветные шарики прозрачные"></div>
+                        <div class="imgCard back">
+                            <ul class='desc text'>
+                                <li class="form">Форма: <span>Cтандарт</span> </li>
+                                <li class="size">Высота шаров: <span>25см</span></li>
+                                <li class="height">Высота c лентой: <span>65см</span></li>
+                                <li class="color">Цвет: <span>Асорти</span></li>
+                                <li class="material">Материал: <span>Прозрачный</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class='fixBox'>
+                        <h3 class="text">Разноцветные шарики прозрачные</h3>
+                        <button class="minus" type="button">-</button>
+                        <input class="countInput" type="number" step="1" min="1" value="1" title="Кол-во" size="4" style="display:inline-block;">
+                        <button class="plus" type="button" style="font-size: 15px;">+</button>
+                        <span class='quantity'><span>1</span> шт.</span>
+                        <span class='cost'><span>25</span> р.</span>
+                    </div>
+                    <button type="button" class="inBasket btn">перейти в карзину</button>
+                    <button type="button" class="addInBasket btn">Добавить в корзину</button>
+                    <button class="moreinfo targetInfo btn">ПОДРОБНЕЕ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

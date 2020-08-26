@@ -1,0 +1,43 @@
+body {
+    width: 1600px;
+    margin: 0 auto;
+}
+
+header,
+.goods-list {
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: coral;
+}
+
+main {
+    background-color: burlywood;
+}
+
+.goods-list {
+    display: flex;
+    justify-content: space-between;
+}
+
+.goods-item {
+    width: 22.5%;
+    border: 1px solid #000;
+    padding: 10px 40px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: 10%;
+}
+
+.goods-item img {
+    display: block;
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+.goods-item button {
+    width: 100px;
+}
