@@ -8,7 +8,6 @@ const goods = [
   ];
   
   const renderGoodsItem = (title = "Что-то пошло не так!", price = "Что-то пошло не так!") => `<div class="goods-item"><h3>${title}</h3><p>${price}</p></div>` ;
-  ;
   
   const renderGoodsList = list => {
     let goodsList = list.map ( item => renderGoodsItem ( item.title, item.price ) );
