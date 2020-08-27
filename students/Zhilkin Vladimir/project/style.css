@@ -1,0 +1,53 @@
+body {
+	padding: 20px;
+	margin: 0 auto;
+}
+
+.head-name {
+	text-align: center;
+	color: blueviolet;
+}
+
+.head-basket {
+	padding: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	min-height: 80px;
+	background-color: aqua;
+}
+
+.cart-button {
+	width: 60px;
+	min-height: 40px;
+	border-radius: 10px
+}
+
+.main-cards {
+	margin: 10px;
+	display: flex;
+	justify-content: space-between;
+}
+
+.goods-list {
+	padding: 10px;
+	background-color: #ccc;
+	width: 200px;
+	min-height: 300px;
+	border: 2px solid;
+	font-family: sans-serif;
+}
+
+.card-img {
+	display: flex;
+	margin: 0 auto;
+}
+
+.card-btn {
+	
+	display: block;
+	margin: 20px 0 0 auto;
+	width: 70px;
+	height: 25px;
+	border-radius: 10px;
+}
