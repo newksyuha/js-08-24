@@ -4,7 +4,7 @@ const goods = [
     { title: 'Jacket', price: 350 },
     { title: 'Shoes', price: 250 },
   ];
-  const renderGoodsItem = (title, price) => {
+  const renderGoodsItem = (title='нет данных', price='нет данных') => {
     return `<div class="goods-item"><h3>${title}</h3><p>${price}</p></div>`;
   };
   
@@ -13,5 +13,5 @@ const goods = [
     document.querySelector('.goods-list').innerHTML = goodsList;
   }
   
-  renderGoodsList(goods);
+  renderGoodsList([...goods]);
   
