@@ -55,7 +55,7 @@ main {
     background-color: lightgoldenrodyellow;  
 }
 
-.goodsAndButton {
+.goodsAddButton {
     float: left;
     margin-left: 10px;
     border: solid 1px black;

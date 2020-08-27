@@ -27,12 +27,13 @@ const goods = [
 // В следующей фукнции можно убрать скобки у единственного аргумента list. Других упрощений, наверное, нет.
 
 const renderGoodsItem = (title = 'Наименование отсутствует', price = 'Цена не указана') => 
-     `<div class="goodsAndButton"><div class="goods-item"><h3>${title}</h3><p>${price} USD</p></div>
+     `<div class="goodsAddButton"><div class="goods-item"><h3>${title}</h3><p>${price} USD</p></div>
             <div><img src='https://placehold.it/130x80'><img></div>
            <div><button class="sale-button" type="button">В корзину</button></div></div>`;
 
+// Оператор join("") позволяет убрать "лишние" запятые в списке товаров.
 const renderGoodsList = list => {
     let goodsList = list.map(item => renderGoodsItem(item.title, item.price));
-    document.querySelector('.goods-list').innerHTML = goodsList;};
+    document.querySelector('.goods-list').innerHTML = goodsList.join("");};
 
 renderGoodsList(goods);
