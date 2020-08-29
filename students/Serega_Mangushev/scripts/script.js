@@ -17,7 +17,7 @@ class Goods {
     this.maxNumPrice = document.querySelector(".shop__max-price");
     this.goods = [];
     this.getGoods(); 
-    this.calcCard('price');
+    this.getSumProduct(this.goods,'price');
     this.render();
   }
   getGoods() {
@@ -45,9 +45,9 @@ class Goods {
     ];
   }
 
-  calcCard(key) { 
+  getSumProduct(arr,key) { 
     this.maxPrice = 0;
-    this.maxPrice = this.goods.reduce((all, cur) => all + cur[key], 0);
+    this.maxPrice = arr.reduce((all, cur) => all + cur[key], 0);
     return this.maxNumPrice.innerHTML =  `Общая цена товаров на сумму: ${this.maxPrice} Руб`;
   } 
 
@@ -97,4 +97,52 @@ function getGoods() {
      ];
  } 
  */
+     
+class Basket{ 
+    constructor(){ 
+        
+    } 
+
+    openBasket(){ 
+        //Открываем корзину.
+    } 
+
+    closeBasket(){ 
+        //Закрываем корзину.
+    } 
+
+    //Еще метод подсчета общей стоимости товаров в корзине, но в планах реализация через getSumProduct 
+
+    getProduct(){ 
+        //Купить товар разумеется.
+    }
+} 
+
+//Могу предположить, что этот класс должен будет быть в Basket
+class ElementBasket{ 
+    constructor(){ 
+        
+    } 
+
+    remove(item){ 
+        //Удаляем  item (Не обязательно только в корзине)
+    } 
+}  
+
+//Временная мера и некоторые методы могут в будущем являться функциональщиной. 
+
+
+/* 
+Небольшое пояснение.  Мы можем предположить, что Корзина - это один класс/объект,  
+ее составляющая - это  product/item.  
+У product  не планируется создавать метод /купить.  
+Логично, что мы добавляем собственность корзины  
+и уже делаем заказ через корзину, т.е покупая товары 
+ - мы покупаем общие товары, которые собственность корзины  
+ и логично, что у товара не может быть метода покупки.  
  
+ Противоречие: Конечно купить n  товар мы не можем,  
+ но нам доступна возможность удалить товар.  
+ Товар один и его мы удаляем, это уже не метод корзины,  
+ а именно метод товара (Удалить) (Добавить) 
+*/    
