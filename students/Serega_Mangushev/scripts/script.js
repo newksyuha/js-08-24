@@ -12,13 +12,19 @@ class ProductСard {
 }
  
 class Goods {
-  constructor() {
-    this.products = document.querySelector(".shop__list");   
-    this.maxNumPrice = document.querySelector(".shop__max-price");
-    this.goods = [];
-    this.getGoods(); 
-    this.getSumProduct(this.goods,'price');
+  constructor() { 
+    this.getVariables();
+    this.getGoods();
+    this.sum = this.getSumProduct(this.goods, "price");   
+    this.maxNumPrice.innerHTML = `Общая цена товаров на сумму: ${this.sum} Руб`;
     this.render();
+  } 
+
+  getVariables(){  
+    this.products = document.querySelector(".shop__list");
+    this.maxNumPrice = document.querySelector(".shop__max-price");
+    this.sum = 0; 
+    this.goods = [];
   }
   getGoods() {
     this.goods = [
@@ -45,11 +51,9 @@ class Goods {
     ];
   }
 
-  getSumProduct(arr,key) { 
-    this.maxPrice = 0;
-    this.maxPrice = arr.reduce((all, cur) => all + cur[key], 0);
-    return this.maxNumPrice.innerHTML =  `Общая цена товаров на сумму: ${this.maxPrice} Руб`;
-  } 
+  getSumProduct(arr, key) {
+    return arr.reduce((all, cur) => all + cur[key], 0); 
+  }
 
   render() {
     let domTree = this.goods
@@ -70,34 +74,13 @@ class Goods {
     this.products.innerHTML = domTree;
   }
 }
-new Goods();
+const goods =  new Goods(); 
 
-/*
-function getGoods() {
-     return [{
-             root: './image/coffee1.webp',
-             title: 'Шоколадное кофе',
-             price: 57
-         },
-         {
-             root: './image/coffee2.webp',
-             title: 'Ванильное кофе',
-             price: 39
-         },
-         {
-             root: './image/coffee3.webp',
-             title: 'Черное кофе',
-             price: 32
-         }, 
-         {
-            root: './image/coffee3.webp',
-            title: 'Черное кофе',
-            price: 32
-        },
-     ];
- } 
- */
+
+
      
+/*
+ 
 class Basket{ 
     constructor(){ 
         
@@ -145,4 +128,142 @@ class ElementBasket{
  но нам доступна возможность удалить товар.  
  Товар один и его мы удаляем, это уже не метод корзины,  
  а именно метод товара (Удалить) (Добавить) 
-*/    
+*/
+
+class Hamburger {
+  constructor() {
+    //Инициализация конструктора.
+    this.type = [
+      {
+        max: {
+          id: 1,
+          description: "Большой гамбургер ",
+          price: 100,
+          kalloriynostyu: 40,
+        },
+        min: {
+          id: 2,
+          description: "Маленький гамбургер ",
+          price: 50,
+          kalloriynostyu: 20,
+        },
+      },
+    ];
+
+    this.filling = [
+      {
+        cheese: {
+          id: 1,
+          description: "С сыром ",
+          price: 10,
+          kalloriynostyu: 20,
+        },
+
+        salad: {
+          id: 2,
+          description: "С салатом ",
+          price: 10,
+          kalloriynostyu: 20,
+        },
+
+        potato: {
+          id: 3,
+          description: "С картошкой ",
+          price: 15,
+          kalloriynostyu: 10,
+        },
+
+        seasoning: {
+          id: 4,
+          description: "Заправить приправой ",
+          price: 15,
+          kalloriynostyu: 0,
+        },
+
+        mayonnaise: {
+          id: 5,
+          description: "Заправить майонезом ",
+          price: 20,
+          kalloriynostyu: 5,
+        },
+      },
+    ];
+
+    this.sum = 0; 
+
+    //Не работает, почему-то показывает NAN
+    this.sum = goods.getSumProduct(Object.values(this.type[0], "price")); 
+    console.log(this.sum); 
+
+    //Выбираем какой гамбургер и специи к нему. Специй по умолчанию может не быть.
+    this.getChoice("2", "да"); //Второй аргумент может называться как угодно, главное, что он есть
+  }
+ 
+
+  //Проверяем , что такой гамбургер есть.
+  getChoice(variant, filling = false) {
+    if (variant === "1") {
+      variant = this.type[0].max.id;
+    }
+    if (variant === "2") {
+      variant = this.type[0].min.id;
+    }
+    this.whatGetBurger(variant, filling);
+  }
+ 
+  //Проверяем что вообще выбрал пользователь из того, что есть.
+  whatGetBurger(variant, filling = false) {
+    //Если пользователь выбрал большой гамбургер.
+    if (variant === this.type[0].max.id) this.price = this.type[0].max.price;
+    //Если пользователь выбрал маленький гамбургер.
+    else if (variant === this.type[0].min.id)
+      this.price = this.type[0].min.price;
+    //Если ошибка.
+    else throw new Error("Гамбургер не был выбран");
+    this.thereIsfilling(variant, filling);
+  }
+ 
+  //По умолчанию если нет специй, тогда сразу покупаем Гамбургер.
+  thereIsfilling(variant, filling = false) {
+    if (filling !== false) this.checkGetFilling(variant, 1);
+    else this.checkWhichBurger(variant);
+  }
+ 
+
+  //Проверка на то, какие специи были выбраны пользователем.
+  checkGetFilling(variant, filling) {
+    if (filling === 1) {
+      filling = this.filling[0].cheese.id;
+      this.price += this.filling[0].cheese.price;
+    } else if (filling === 2) {
+      filling = this.filling[0].salad.id;
+      this.price += this.filling[0].salad.price;
+    } else if (filling === 3) {
+      filling = this.filling[0].potato.id;
+      this.price += this.filling[0].potato.price;
+    } else if (filling === 4) {
+      filling = this.filling[0].seasoning.id;
+      this.price += this.filling[0].seasoning.price;
+    } else if (filling === 5) {
+      filling = this.filling[0].mayonnaise.id;
+      this.price += this.filling[0].mayonnaise.price;
+    }
+    this.checkWhichBurger(variant);
+  }
+ 
+  //Вывод результата в консоль логе.
+  checkWhichBurger(variant) {
+    if (variant === this.type[0].max.id)
+      console.log(
+        `Вы заказали ${this.type[0].max.description} по цине ${this.price}`
+      );
+    if (variant === this.type[0].min.id)
+      console.log(
+        `Вы заказали ${this.type[0].min.description} по цине ${this.price}`
+      );
+    return;
+  }
+}
+
+const hamburger = new Hamburger();
+    
