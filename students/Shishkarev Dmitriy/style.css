@@ -1,0 +1,32 @@
+
+header{
+    height: 40px;
+    background-color: #bbb;
+    margin-bottom: 20px;
+;
+}
+.goods-list{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.cart-button{
+    border-radius: 20px;
+    background-color: #111;
+    color: #ccc;
+    float: right;
+}
+.cart-button:focus{
+    color: #111;
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.goods-item{
+    float: left;
+    width: 20%;
+    min-width: auto;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}

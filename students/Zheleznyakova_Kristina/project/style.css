@@ -1,0 +1,30 @@
+header {
+    width: 80%;
+    height: 60px;
+    padding: 0;
+    background-color: rgb(93, 93, 93);
+}
+
+.cart-button {
+    background-color: aliceblue;
+    float: right;
+    margin: 10px;
+    padding: 10px;
+    color: black;
+}
+
+.cart-button:hover {
+    background-color: rgb(204, 204, 204) ;
+}
+
+.goods-item {
+    display: inline-block;
+    padding: 50px;
+    margin: 20px;
+    border: 2px solid gray;
+    text-align: center;
+}
+
+.goods-item h3 {
+    padding-bottom: 20px;
+}
