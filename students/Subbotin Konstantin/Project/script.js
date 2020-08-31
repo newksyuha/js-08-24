@@ -1,5 +1,5 @@
 'use strict';
-
+//
 /* const goods = [
     { title: 'Shirt', price: 150 },
     { title: 'Socks', price: 50 },
