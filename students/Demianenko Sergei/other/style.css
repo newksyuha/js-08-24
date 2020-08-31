@@ -18,6 +18,8 @@ header {
 }
 
 .cart-button {
+    box-shadow: 0 0 2px 1px black;
+    border: none;
     border-radius: 25px;
     width: 70px;
     height: 25px;
@@ -36,4 +38,6 @@ main {
 .goods-item {
 border: 1px solid black;
 text-align: center;
+box-shadow: 0 0 2px 1px black;
+padding: 5px 5px;
 }
