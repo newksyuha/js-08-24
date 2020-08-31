@@ -1,0 +1,50 @@
+body {
+    width: 720px;
+    margin: 0 auto;
+}
+
+.productBlock {
+    width: 100%;
+    padding: 100px;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+    background-color: brown;
+    display: none;
+}
+
+button {
+ background-color: grey;
+}
+
+.Product {
+    width: 30%;
+    padding: 0;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.priseFirstProduct {
+    text-align: center;
+}
+
+.caloriesFirstProduct {
+    text-align: center;
+}
+
+.secondProduct {
+    width: 30%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.priseSecondProduct {
+    text-align: center;
+}
+
+.caloriesSecondProduct {
+    text-align: center;
+}
