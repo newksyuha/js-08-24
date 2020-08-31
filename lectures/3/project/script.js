@@ -1,21 +1,6 @@
-const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
-
-function sendRequest(url, callback) {
-  const xhr = new XMLHttpRequest;
-
-  xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4) {
-          callback(JSON.parse(xhr.responseText));
-      }
-  }
-  xhr.open('GET', `${API}${url}`, true);
-
-  xhr.send();
-}
-
 class GoodsItem {
-  constructor({ product_name, price }) {
-    this.title = product_name;
+  constructor({ title, price }) {
+    this.title = title;
     this.price = price;
   }
 
@@ -36,10 +21,12 @@ class GoodsList {
   }
 
   fetchGoods() {
-    sendRequest('/catalogData.json', (goods) => {
-      this.goods = goods;
-      this.render();
-    });
+    this.goods = [
+      { title: 'Shirt', price: 150 },
+      { title: 'Socks', price: 50 },
+      { title: 'Jacket', price: 350 },
+      { title: 'Shoes', price: 250 },
+    ];
   }
 
   total() {
@@ -56,6 +43,8 @@ class GoodsList {
 }
 
 const goodsList = new GoodsList();
+goodsList.render();
+
 
 class Basket {
   constructor() {
