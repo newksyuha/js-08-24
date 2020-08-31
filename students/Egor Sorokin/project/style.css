@@ -1,0 +1,49 @@
+.container {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    background-color: #cbf1cb;
+    height: 60px;
+}
+
+.cart-button {
+    background-color: #48d648;
+    padding: 10px;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    float: right;
+    margin: 10px;
+}
+
+.cart-button:hover {
+    background-color: #59e759;
+}
+
+.cart-button:active {
+    background-color: #6af86a;
+}
+
+.goods-list {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.goods-item {
+    height: 200px;
+    width: 200px;
+    margin: 15px;
+    padding-top: 110px;
+    padding-left: 20px;
+    box-sizing: border-box;
+    background-color:#eeeeee;
+    background-image: url('https://via.placeholder.com/180x110.jpg');
+    background-repeat: no-repeat;
+    background-position-x: 10px;
+    background-position-y: 10px;
+}

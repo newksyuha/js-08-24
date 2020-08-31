@@ -1,0 +1,471 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+button:active,
+button:focus {
+    outline: none;
+}
+
+button::-moz-focus-inner {
+    border: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+
+.menu {
+    width: 100%;
+    height: 80px;
+}
+
+.menuBasket {
+    float: right;
+    margin-top: 22px;
+    margin-right: 10%;
+    cursor: pointer;
+}
+
+.menuBasket a {
+    text-decoration: none;
+}
+
+.menuBasket span {
+    font-family: Roboto;
+    font-size: 24px;
+    font-weight: 500;
+    color: #33608c;
+}
+
+.container {
+    margin: 0 auto;
+    max-width: 1400px;
+    perspective: 600px;
+}
+
+.boxShops {
+    width: 100%;
+    text-align: center;
+    position: relative;
+}
+
+.itemBox {
+    display: inline-block;
+    width: 23%;
+    min-width: 330px;
+    margin: 18px 1.66%;
+    vertical-align: top;
+    text-align: center;
+    background-color: #f0f9ff;
+    padding: 0;
+    backface-visibility: hidden;
+}
+
+.imgCard {
+    width: 100%;
+    height: 100%;
+    transition: 1.5s;
+    backface-visibility: hidden;
+}
+
+.imgCard>img {
+    max-width: 100%;
+}
+
+.text {
+    width: 100%;
+    min-height: 78px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: #33608c;
+    text-align: left;
+    margin-bottom: 5px;
+    padding-top: 10px;
+}
+
+.minus,
+.plus {
+    padding: 0;
+    height: 40px;
+    width: 40px;
+    background-color: rgba(255, 239, 169, 0.45);
+    border: solid 1px #f4f4f4;
+    top: 2px;
+    display: inline-block;
+    position: relative;
+    float: left;
+    border-radius: 5px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.countInput {
+    float: left;
+    position: relative;
+    top: 3px;
+    height: 39px;
+    width: 80px;
+    margin: 0 10px;
+    padding: 0;
+    border-radius: 5px;
+    border: solid 1px #ebebeb;
+    background-color: #f6f6f6;
+    color: #33608c;
+    font-family: Roboto;
+    font-size: 18px;
+    font-weight: 300;
+    box-shadow: none;
+    text-align: center;
+}
+
+.quantity {
+    position: relative;
+    top: 17px;
+    font-family: Roboto;
+    font-size: 18px;
+    font-weight: 300;
+    color: #33608c;
+}
+
+.cost {
+    display: block;
+    clear: both;
+    padding: 10px 0;
+    text-align: left;
+    padding-left: 0;
+    font-family: Roboto;
+    font-size: 42px;
+    font-weight: bold;
+    color: #33608c;
+}
+
+.btn {
+    width: 100%;
+    height: 66.7px;
+    border-radius: 0;
+    font-family: Roboto;
+    font-size: 24px;
+    font-weight: 500;
+    border: none;
+    background-color: #ffefa9;
+    color: #33608c;
+    transition: 0.25s;
+    cursor: pointer;
+}
+
+.inBasket {
+    display: none;
+    padding: 0;
+    line-height: 40px;
+    text-decoration: none;
+    font-size: 18px;
+    background-color: #f0f9ff;
+}
+
+.itemBox .moreinfo {
+    width: 100%;
+    height: 43.1px;
+    border-radius: 0;
+    font-family: Roboto;
+    font-size: 19px;
+    font-weight: 300;
+    text-align: center;
+    background-color: white;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.itemBox .moreinfoActive {
+    transition: .25s;
+    background-color: rgba(51, 96, 140, 0.75);
+    color: #ffefa9;
+}
+
+.fixBox {
+    margin-left: 9px;
+}
+
+.back {
+    box-shadow: 0 0 15px 1px rgba(51, 96, 140, 0.3);
+    background: white;
+    transform: rotateY(180deg);
+    margin-top: -101%;
+    position: absolute;
+}
+
+.frontAnimate {
+    transform: rotateY(180deg);
+}
+
+.backAnimate {
+    transform: rotateY(360deg);
+}
+
+.imgBox {
+    margin: 0 auto;
+    width: 95%;
+    cursor: pointer;
+    perspective: 1000px;
+}
+
+.desc {
+    line-height: 55px;
+    margin-left: 20px;
+    padding: 0;
+    font-size: 16px;
+}
+
+.desc span {
+    font-weight: 600;
+}
+
+.modal {
+    position: fixed;
+    z-index: 1010;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1200px;
+    max-width: 97%;
+    height: 700px;
+    max-height: 100%;
+    background: white;
+    border-radius: 15px;
+}
+
+.modalBasket {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px 50px 20px 20px;
+    overflow: auto;
+}
+
+.overlay {
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.backBtn {
+    width: auto;
+    position: absolute;
+    z-index: 1;
+    top: 20px;
+    right: 25px;
+    border: 0;
+    padding: 5px 10px;
+    height: auto;
+    font-size: 1.3rem;
+    border-radius: 10px;
+}
+
+.basketItemBox {
+    margin-bottom: 12px;
+    background-color: #f0f9ff;
+    height: 160px;
+    width: 600px;
+}
+
+.basketImg {
+    width: 24%;
+    height: 95%;
+    padding: 0.8% 0 0 1%;
+}
+
+.basketImg>img {
+    width: 100%;
+}
+
+.basketInfoItem {
+    width: 48%;
+    height: 95%;
+    padding: 0.8% 0 0 1%;
+}
+
+.textInBasket {
+    font-size: 16px;
+}
+
+.basketFixBox {
+    height: 90%;
+}
+
+.basketRemove {
+    position: relative;
+    height: 45%;
+}
+
+.basketCost {
+    height: 45%;
+}
+
+.close {
+    position: absolute;
+    right: 7px;
+    top: 0px;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+    cursor: pointer;
+}
+
+.modalNone {
+    display: none;
+}
+
+.modalBlock {
+    display: block;
+}
+
+.makeOrder {
+    position: fixed;
+    bottom: 30px;
+    right: 25px;
+    height: 300px;
+    width: 450px;
+    background: #32608c;
+    border-radius: 10px;
+}
+
+.sum {
+    margin-top: 10px;
+    margin-left: 20px;
+    height: 80%
+}
+
+.buy {
+    height: 20%;
+    background: #ffefa9;
+    border-radius: 0 0 10px 10px;
+}
+
+.btnBuy {
+    height: 100%;
+    width: 100%;
+    border-radius: 0 0 10px 10px;
+}
+
+.textSum {
+    color: white;
+    font-size: 30px;
+}
+
+.spanInBasket {
+    padding-bottom: 32px;
+    padding-top: 0;
+    color: white;
+    font-size: 45px;
+}
+
+.itemBox:hover {
+    transition: box-shadow .25s;
+    box-shadow: 0 0 29px 5px rgba(51, 96, 140, 0.3)
+}
+
+.itemBox:hover .plus,
+.itemBox:hover .minus {
+    border: solid 1px rgba(50, 95, 139, 0.12);
+}
+
+.minus:hover,
+.plus:hover {
+    background-color: #dad8da;
+}
+
+.btn:active,
+.plus:active,
+.minus:active {
+    background-image: none;
+    outline: 0;
+    box-shadow: inset 0 10px 20px rgba(0, 0, 0, .125);
+}
+
+.addInBasket:hover {
+    background-color: #33608c;
+    color: #ffefa9;
+}
+
+.itemBox:hover .targetInfo {
+    transition: .25s;
+    background-color: #ffefa9;
+    color: rgba(51, 96, 140, 0.75);
+}
+
+.itemBox .moreinfo:hover {
+    background-color: #33608c;
+    color: #ffefa9;
+}
+
+.inBasket:hover {
+    color: #6fa0ce;
+}
+
+.backBtn:hover,
+.clearBtn:hover {
+    background-color: #33608c;
+    color: #ffefa9;
+}
+
+.close:hover {
+    opacity: 1;
+}
+
+.close:before,
+.close:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 25px;
+    width: 2px;
+    background-color: #333;
+}
+
+.close:before {
+    transform: rotate(45deg);
+}
+
+.close:after {
+    transform: rotate(-45deg);
+}
+
+back @media only screen and (max-width: 1150px) {
+    .makeOrder {
+        width: 350px;
+    }
+}
+
+@media only screen and (max-width: 1050px) {
+    .makeOrder {
+        width: 290px;
+    }
+}
+
+.clearBtn {
+    width: auto;
+    position: absolute;
+    z-index: 1;
+    top: 20px;
+    right: 145px;
+    border: 0;
+    padding: 5px 10px;
+    height: auto;
+    font-size: 1.3rem;
+    border-radius: 10px;
+}
