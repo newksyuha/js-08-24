@@ -1,0 +1,22 @@
+[
+    {
+      "root": "./image/coffee1.webp",
+      "title": "Шоколадное кофе",
+      "price": 57
+    },
+    {
+      "root": "./image/coffee2.webp",
+      "title": "Ванильное кофе",
+      "price": 39
+    },
+    {
+      "root": "./image/coffee3.webp",
+      "title": "Черное кофе",
+      "price": 32
+    },
+    {
+      "root": "./image/coffee3.webp",
+      "title": "Черное кофе",
+      "price": 32
+    }
+  ]
