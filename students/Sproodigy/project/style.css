@@ -3,9 +3,15 @@ body {
   margin: 0;
 }
 
+hr {
+  color: #fff;
+  width: 90%;
+}
+
 .header {
   padding: 1em;
   background: #FFDC40;
+  box-shadow: 0 3px 12px 5px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -19,15 +25,38 @@ body {
   color: #fff;
   font-size: 1.5em;
   line-height: 2em;
+  cursor: pointer;
+  transition: background-color .3s ease;
 }
 
 .cart-button:hover {
-  cursor: pointer;
+  color: #000;
   background: #6B8FD4;
 }
 
 .cart-button:active {
 	background: #BF6E30;
+}
+
+.btns-wrp {
+  display: flex;
+  justify-content: space-around;
+  padding: 2em;
+  box-shadow: 0 3px 12px 5px;
+}
+
+.fetch-btn {
+  border: none;
+  padding: 1em;
+  border-radius: 8px;
+  background: #FFDC40;
+  cursor: pointer;
+  transition: background-color .3s ease;
+}
+
+.fetch-btn:hover {
+  background: #A64800;
+  color: #fff;
 }
 
 .goods-item {
@@ -42,7 +71,9 @@ body {
 .goods-list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  padding: 2em 0;
+  box-shadow: 0px 0px 6px 3px;
+  margin: 2em 1em;
 }
 
 .total-price {
