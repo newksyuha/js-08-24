@@ -1,8 +1,50 @@
 //const products = document.querySelector('.shop__list');
+function getSum(arr, key) {
+  return arr.reduce((all, cur) => all + cur[key], 0);
+}
+
+//New Method fetch  который вернет промис.
+/*
+function getGoods(url){
+  return fetch(url)
+    .then((res) => res.json(res)) 
+    .then((data) => console.log(data)) 
+  } 
+  getGoods('https://raw.githubusercontent.com/Binatik/js-08-24/master/students/Serega_Mangushev/backend/Server/goods.json');
+*/
+const xhr = new XMLHttpRequest(); //API, который предоставляет клиенту функциональность для обмена данными между клиентом и сервером.
+const root =
+  "https://raw.githubusercontent.com/Binatik/js-08-24/master/students/Serega_Mangushev/backend/Server";
+
+/**
+ *
+ * @param {`*`} request
+ * @param {*} root
+ * @param {*} url
+ * @returns xhr.responseText
+ */
+function promisifiedXHR(request, root, url) {
+  return new Promise((resolve, reject) => {
+    xhr.onreadystatechange = function () {
+      //Проверяем, что операция полностью завершена.
+
+      if (xhr.readyState === 4) resolve(JSON.parse(xhr.responseText));
+
+      //Если это так, вернем resolve с нужным значением. В нашем случае это xhr.responseText
+    };
+
+    xhr.open(request, `${root + url}`, true);
+
+    xhr.send();
+  });
+}
+
 class ProductСard {
-  constructor(item = []) { 
-    this.root = item.root;
-    this.title = item.title;
+  constructor(item = []) {  
+    this.id = item.id;
+    this.count = item.count;
+    this.image = item.image;
+    this.name = item.name;
     this.price = item.price;
   }
 
@@ -10,49 +52,29 @@ class ProductСard {
     return component;
   }
 }
+
  
 class Goods {
-  constructor() { 
+  constructor() {
     this.getVariables();
     this.getGoods();
-    this.sum = this.getSumProduct(this.goods, "price");   
-    this.maxNumPrice.innerHTML = `Общая цена товаров на сумму: ${this.sum} Руб`;
-    this.render();
-  } 
+  }
 
-  getVariables(){  
+  getVariables() {
     this.products = document.querySelector(".shop__list");
     this.maxNumPrice = document.querySelector(".shop__max-price");
-    this.sum = 0; 
+    this.sum = 0;
     this.goods = [];
   }
   getGoods() {
-    this.goods = [
-      {
-        root: "./image/coffee1.webp",
-        title: "Шоколадное кофе",
-        price: 57,
-      },
-      {
-        root: "./image/coffee2.webp",
-        title: "Ванильное кофе",
-        price: 39,
-      },
-      {
-        root: "./image/coffee3.webp",
-        title: "Черное кофе",
-        price: 32,
-      },
-      {
-        root: "./image/coffee3.webp",
-        title: "Черное кофе",
-        price: 32,
-      },
-    ];
-  }
-
-  getSumProduct(arr, key) {
-    return arr.reduce((all, cur) => all + cur[key], 0); 
+    //Вызываем нашу функцию, которая вернет промис и отдаст запрос с сервера.
+    promisifiedXHR("GET", root, "/goods.json").then((goods) => {
+      //Полученные данные храним в  this
+      this.goods = goods;
+      this.sum = getSum(this.goods, "price");
+      this.maxNumPrice.innerHTML = `Общая цена товаров на сумму: ${this.sum} Руб`;
+      this.render();
+    });
   }
 
   render() {
@@ -74,10 +96,7 @@ class Goods {
     this.products.innerHTML = domTree;
   }
 }
-const goods =  new Goods(); 
-
-
-
+const goods = new Goods();
      
 /*
  
@@ -255,15 +274,18 @@ class Hamburger {
   checkWhichBurger(variant) {
     if (variant === this.type[0].max.id)
       console.log(
-        `Вы заказали ${this.type[0].max.description} по цине ${this.price}`
+        `Вы заказали ${this.type[0].max.description} по цене ${this.price}`
       );
     if (variant === this.type[0].min.id)
       console.log(
-        `Вы заказали ${this.type[0].min.description} по цине ${this.price}`
+        `Вы заказали ${this.type[0].min.description} по цене ${this.price}`
       );
     return;
   }
 }
 
-const hamburger = new Hamburger();
+const hamburger = new Hamburger(); 
+
+
+
     

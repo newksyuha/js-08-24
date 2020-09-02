@@ -1,22 +1,23 @@
 [
-    {
-      "root": "./image/coffee1.webp",
-      "title": "Шоколадное кофе",
+    { 
+      "id": 1, 
+      "count": 1,
+      "image": "./image/coffee1.webp",
+      "name": "Шоколадное кофе",
       "price": 57
     },
-    {
-      "root": "./image/coffee2.webp",
-      "title": "Ванильное кофе",
+    { 
+      "id": 2, 
+      "count": 1,
+      "image": "./image/coffee2.webp",
+      "name": "Ванильное кофе",
       "price": 39
     },
-    {
-      "root": "./image/coffee3.webp",
-      "title": "Черное кофе",
-      "price": 32
-    },
-    {
-      "root": "./image/coffee3.webp",
-      "title": "Черное кофе",
+    { 
+      "id": 3, 
+      "count": 2,
+      "image": "./image/coffee3.webp",
+      "name": "Черное кофе",
       "price": 32
     }
   ]
