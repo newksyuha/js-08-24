@@ -68,17 +68,6 @@ class FetchButton {
   }
 }
 
-class GoodsItem {
-  constructor(title, price) {
-    this.product_name = title;
-    this.price = price;
-  }
-
-  render() {
-    return `<div class="goods-item"><h3>Name: ${this.product_name}</h3><p>Price: ${this.price}&#36;</p></div>`;
-  }
-}
-
 class GoodsList {
   constructor() {
     this.goods = [];
@@ -118,72 +107,195 @@ class GoodsList {
 
   _renderTotalPrice() {
     this._calcTotalPrice()
-    return `<div class="total-price"><b>Total price:</b> ${this.totalPrice}&#36;</div><hr>`;
+
+    const div = document.createElement('div')
+
+    div.classList.add('total-price')
+    div.innerHTML = `<b>Total price:</b> ${this.totalPrice}&#36;`
+
+    return div
   }
 
   render(fetchFrom) {
-    let listHtml = '';
-    const fromHtml = `<div style="width: 100%; text-align: center; font-size: 2em;">${fetchFrom}</div>`
+    const fromHtml = `<h3 class='from-html'>${fetchFrom}</h3>`
     this.totalPrice = 0
+    document.querySelector('.goods-list').innerHTML = fromHtml
     this.goods.forEach((good) => {
-      const goodItem = new GoodsItem(good.product_name, good.price);
-      listHtml += goodItem.render();
+      const goodItem = new GoodsItem(good.product_name, good.price, 1);
+      document.querySelector('.goods-list').appendChild(goodItem.render())
+      ;
     });
-    document.querySelector('.goods-list').innerHTML = fromHtml + listHtml;
-    document.querySelector('.goods-list').innerHTML += this._renderTotalPrice();
+    document.querySelector('.goods-list').appendChild(this._renderTotalPrice())
+    document.querySelector('.goods-list').appendChild(document.createElement('hr'))
   }
 
   renderGoodsPromise(fetchFrom) {
-    let listHtmlPromise = ''
-    const fromHtml = `<div style="width: 100%; text-align: center; font-size: 2em;">${fetchFrom}</div>`
+    const fromHtml = `<h3 class='from-html'>${fetchFrom}</h3>`
+    document.querySelector('.goods-list').innerHTML += fromHtml
     this.goods.forEach((good) => {
-      const goodItem = new GoodsItem(good.product_name, good.price);
-      listHtmlPromise += goodItem.render();
+      const goodItem = new GoodsItem(good.product_name, good.price, 1);
+      document.querySelector('.goods-list').appendChild(goodItem.render())
     });
-    document.querySelector('.goods-list').innerHTML += fromHtml + listHtmlPromise;
-    document.querySelector('.goods-list').innerHTML += this._renderTotalPrice();
+    document.querySelector('.goods-list').appendChild(this._renderTotalPrice())
+    document.querySelector('.goods-list').appendChild(document.createElement('hr'))
   }
 
   renderGoodsReturnPromise(fetchFrom) {
-    let listHtmlReturnPromise = ''
-    const fromHtml = `<div style="width: 100%; text-align: center; font-size: 2em;">${fetchFrom}</div>`
+    const fromHtml = `<h3 class='from-html'>${fetchFrom}</h3>`
+    document.querySelector('.goods-list').innerHTML += fromHtml
     this.goods.forEach((good) => {
-      const goodItem = new GoodsItem(good.product_name, good.price);
-      listHtmlReturnPromise += goodItem.render();
+      const goodItem = new GoodsItem(good.product_name, good.price, 1);
+      document.querySelector('.goods-list').appendChild(goodItem.render())
     });
-    document.querySelector('.goods-list').innerHTML += fromHtml + listHtmlReturnPromise;
-    document.querySelector('.goods-list').innerHTML += this._renderTotalPrice();
+    document.querySelector('.goods-list').appendChild(this._renderTotalPrice())
+    document.querySelector('.goods-list').appendChild(document.createElement('hr'))
   }
 
   renderGoodsFetch(fetchFrom) {
-    let listHtmlFetch = ''
-    const fromHtml = `<div style="width: 100%; text-align: center; font-size: 2em;">${fetchFrom}</div>`
+    const fromHtml = `<h3 class='from-html'>${fetchFrom}</h3>`
+    document.querySelector('.goods-list').innerHTML += fromHtml
     this.goods.forEach((good) => {
-      const goodItem = new GoodsItem(good.product_name, good.price);
-      listHtmlFetch += goodItem.render();
+      const goodItem = new GoodsItem(good.product_name, good.price, 1);
+      document.querySelector('.goods-list').appendChild(goodItem.render())
     });
-    document.querySelector('.goods-list').innerHTML += fromHtml + listHtmlFetch;
-    document.querySelector('.goods-list').innerHTML += this._renderTotalPrice();
+    document.querySelector('.goods-list').appendChild(this._renderTotalPrice())
+    document.querySelector('.goods-list').appendChild(document.createElement('hr'))
+  }
+}
+
+class GoodsItem {
+  constructor(title, price, quantity) {
+    this.product_name = title;
+    this.price = price;
+    this.quantity = quantity;
+  }
+
+  _addToCart() {
+    const CartInstance = new Cart()
+    const cartItem = new CartItem(this.product_name, this.price, this.quantity)
+    CartInstance.add(cartItem)
+    CartInstance.render()
+  }
+
+  _removeFromCart() {
+    const CartInstance = new Cart()
+    CartInstance.remove()
+    console.log(CartInstance.cart)
+  }
+
+  render() {
+    const div = document.createElement('div')
+    const name = document.createElement('h3')
+    const price = document.createElement('p')
+    const addBtn = document.createElement('button')
+    const removeBtn = document.createElement('button')
+
+    name.innerHTML = `<b>Name: </b>${this.product_name}`
+    price.innerHTML = `<b>Price: </b>${this.price}&#36;`
+
+    div.classList.add('goods-item')
+
+    addBtn.innerText = 'Add'
+    addBtn.classList.add('goods-item__btn')
+    addBtn.addEventListener('click', () => {
+      this._addToCart()
+    })
+
+    removeBtn.innerText = 'Remove'
+    removeBtn.classList.add('goods-item__btn')
+    removeBtn.addEventListener('click', () => {
+      this._removeFromCart()
+    })
+
+    div.appendChild(name)
+    div.appendChild(price)
+    div.appendChild(addBtn)
+    div.appendChild(removeBtn)
+
+    return div
   }
 }
 
 class CartItem {
-  constructor() {}
-  increaseQuantity() {}
-  decreaseQuantity() {}
-  calcTotalSum() {}
-  calcTotalQuantity() {}
-  remove() {}
-  render() {}
+  constructor(title, price, quantity) {
+    this.title = title
+    this.price = price
+    this.quantity = quantity
+  }
+
+  addItem() {
+    this.cart.addItem(this.name)
+  }
+
+  removeItem() {
+    this.cart.removeItem(this.name)
+  }
+
+  addQuantity() {
+    const CartInstance = new Cart()
+    this.quantity += 1
+    CartInstance.render()
+  }
+
+  render() {
+    const div = document.createElement('div')
+    const btn = document.createElement('button')
+
+    btn.innerHTML = '+'
+    btn.addEventListener('click', () => {
+      this.addQuantity()
+    })
+
+    div.innerHTML = `
+      <h4><b>Name: </b>${this.title}</h4>
+      <p><b>Price: </b>${this.price}</p>
+      <p class="quantity"><b>Quantity: </b>${this.quantity}</p>
+    `
+    div.classList.add('cart__item')
+    div.appendChild(btn)
+
+    return div
+  }
 }
 
 class Cart {
-  constructor() {}
-  calcTotalPrice() {}
-  calcTotalQuantity() {}
-  clear() {}
-  render() {}
+  cart = []
+
+  constructor() {
+    if (Cart._instance) {
+      return Cart._instance
+    }
+    Cart._instance = this
+  }
+
+  fetchGoods() {
+
+  }
+
+  add(product) {
+    this.cart.push(product)
+  }
+
+  remove(product) {
+    this.cart.splice(this.cart.indexOf(product, 1))
+  }
+
+  total() {
+
+  }
+
+  render() {
+    const cartPlace = document.querySelector('.cart')
+
+    if (cartPlace) cartPlace.innerHTML = ''
+
+    this.cart.forEach(item => {
+      cartPlace.appendChild(item.render())
+    })
+  }
 }
+
+const CartInstance = new Cart()
 
 const list = new GoodsList();
 
