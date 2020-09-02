@@ -25,7 +25,3 @@ const renderGoodsList = (list) => {
 /* мы убрали эти -> {} скобки так как внутри записана всего 1 функция, если действие всего одно< то допускается опускать скобки */
 const renderGoodsList = list => list.forEach(elem => document.querySelector('.goods-list').innerHTML += `<div class="goods-item"><img src="./img/1.jpeg" alt="#"><h3>${elem.title}</h3><p>${elem.price}rub</p><button>add</button></div>`);
 renderGoodsList(goods);
-
-/* Метод Map создал новый массив в который положил 4 результата вызова функции и разделил их запятыми.
- А используя innerHTML мы говорим "выведи все, что найдешь в массиве - строкой". Вот и получаем запятые которые раньше служили как разделитель элементов в массиве
- в коде html  в виде строки. Выход: использовал метод forEach. Можно было использовать reduce   */ //! <3
