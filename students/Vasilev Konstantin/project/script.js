@@ -1,17 +1,58 @@
-const goods = [
-    { title: 'Shirt', price: 150 },
-    { title: 'Socks', price: 50 },
-    { title: 'Jacket', price: 350 },
-    { title: 'Shoes', price: 250 },
-];
+class GoodsItem {
+    constructor({ title, image, price, sticker, button }) {
+        this.title = title;
+        this.image = image;
+        this.price = price;
+        this.sticker = sticker;
+        this.button = button;
+    }
 
-const renderGoodsItem = (title = "No title", price = "No price ") => {
-    return `<div class="goods-item"><h3>${title}</h3><p>${price}</p></div>` ;
-};
-
-const renderGoodsList = (list) => {
-    let goodsList = list.map(item => renderGoodsItem(item.title, item.price));
-    document.querySelector('.goods-list').innerHTML = goodsList.join('');
+    render() {
+        return `
+            <div class="goods-item">
+                <h3>${this.title}</h3>
+                <img src="${this.image}">
+                <p>${this.price}</p>
+                <span>${this.sticker}</span>
+                <button>${this.button}</button>
+            </div>
+        `;
+    }
 }
 
-renderGoodsList(goods);
+class GoodsList {
+    constructor() {
+        this.goods = [];
+        this.fetchGoods();
+    }
+
+    fetchGoods() {
+        this.goods = [
+            { title: 'Shirt', image: 'image/1.jpg', sticker: 'hot', price: 150, button: 'добавить в корзину' },
+            { title: 'Socks', image: 'image/2.jpg', sticker: '', price: 50, button: 'добавить в корзину' },
+            { title: 'Jacket', image: 'image/3.jpg', sticker: '', price: 350, button: 'добавить в корзину' },
+            { title: 'Shoes', image: 'image/4.jpg', sticker: 'sale', price: 250, button: 'добавить в корзину' },
+        ];
+
+        total() {
+            let sum = 0;
+            this.goods.forEach(item => {
+                sum += item.price;
+            })
+            return sum;
+        }
+    }
+
+
+
+    render() {
+        const goodsList = this.goods.map(item => {
+            const goodsItem = new GoodsItem(item);
+            return goodsItem.render();
+        });
+        document.querySelector('.goods-list').innerHTML = goodsList.join('');
+    }
+}
+
+const goodsList = new GoodsList();
+goodsList.render();
