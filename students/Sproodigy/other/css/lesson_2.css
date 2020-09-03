@@ -1,0 +1,86 @@
+.ingredients {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+.hidden {
+  display: none;
+}
+
+.select-wrp {
+  border-radius: 10px;
+  background: #FFDC40;
+  border: none;
+  margin: 2rem 0;
+  padding: 0.6em 0.3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+label {
+  margin: 0 5px 0 0;
+}
+
+.select {
+  background: #05296E;
+  color: #fff;
+  padding: .4em;
+  border: none;
+  border-radius: 5px;
+}
+
+.btn {
+  width: 100%;
+  padding: .5em;
+  background: #FF6F00;
+  border: none;
+  font-size: 1.5em;
+  margin: 1rem 0 0 0;
+  text-transform: uppercase;
+  transition: background-color .5s ease;
+}
+
+.btn:hover {
+  background: #A64800;
+  cursor: pointer;
+}
+
+.hamburger-data {
+  border: 2px solid;
+  padding: 1rem;
+  margin: 3rem 0;
+  background: yellow;
+}
+
+@media only screen and (max-width: 1072px) {
+  .ingredients {
+  	justify-content: center;
+  }
+
+  .ingredients.shown {
+    justify-content: space-between;
+  }
+
+  .shown > .select-wrp {
+    width: 48%;
+    margin: 1rem 0;
+  }
+
+  .select-wrp {
+  	width: 30%;
+  	margin: 2rem 6px;
+  }
+
+  @media only screen and (max-width: 768px) {
+    .select-wrp {
+      width: 100%;
+      margin: 1rem 1px;
+    }
+
+    .shown > .select-wrp {
+      width: 100%;
+      margin: 1rem 0;
+    }
+}
