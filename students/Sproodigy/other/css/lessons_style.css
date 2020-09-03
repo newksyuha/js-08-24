@@ -20,6 +20,10 @@ hr {
   background: #05296E;
 }
 
+.hr_full-width {
+  width: 100%; 
+}
+
 .main {
   display: grid;
   grid-template-rows: auto auto auto auto;
@@ -56,6 +60,7 @@ hr {
   padding: 1em 0;
   width: 60%;
   margin: 0 auto;
+  background: #FF6F00;
 }
 
 .lesson__title {
