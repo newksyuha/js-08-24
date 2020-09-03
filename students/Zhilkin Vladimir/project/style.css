@@ -17,8 +17,9 @@ body {
 	background-color: aqua;
 }
 
-.cart-button {
-	width: 60px;
+.cart-button,
+.addClick {
+	width: 80px;
 	min-height: 40px;
 	border-radius: 10px
 }
@@ -44,7 +45,7 @@ body {
 }
 
 .card-btn {
-	
+
 	display: block;
 	margin: 20px 0 0 auto;
 	width: 70px;
