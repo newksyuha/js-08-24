@@ -1,0 +1,23 @@
+[
+    { 
+      "id": 1, 
+      "count": 1,
+      "image": "./image/coffee1.webp",
+      "name": "Шоколадное кофе",
+      "price": 57
+    },
+    { 
+      "id": 2, 
+      "count": 1,
+      "image": "./image/coffee2.webp",
+      "name": "Ванильное кофе",
+      "price": 39
+    },
+    { 
+      "id": 3, 
+      "count": 2,
+      "image": "./image/coffee3.webp",
+      "name": "Черное кофе",
+      "price": 32
+    }
+  ]
