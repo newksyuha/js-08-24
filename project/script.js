@@ -1,6 +1,21 @@
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+
+function sendRequest(url, callback) {
+  const xhr = new XMLHttpRequest;
+
+  xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+          callback(JSON.parse(xhr.responseText));
+      }
+  }
+  xhr.open('GET', `${API}${url}`, true);
+
+  xhr.send();
+}
+
 class GoodsItem {
-  constructor({ title, price }) {
-    this.title = title;
+  constructor({ product_name, price }) {
+    this.title = product_name;
     this.price = price;
   }
 
@@ -21,12 +36,14 @@ class GoodsList {
   }
 
   fetchGoods() {
-    this.goods = [
-      { title: 'Shirt', price: 150 },
-      { title: 'Socks', price: 50 },
-      { title: 'Jacket', price: 350 },
-      { title: 'Shoes', price: 250 },
-    ];
+    sendRequest('/catalogData.json', (goods) => {
+      this.goods = goods;
+      this.render();
+    });
+  }
+
+  total() {
+    return this.goods.reduce((acc, cur) => acc + cur.price, 0);
   }
 
   render() {
@@ -39,4 +56,56 @@ class GoodsList {
 }
 
 const goodsList = new GoodsList();
-goodsList.render();
+
+class Basket {
+  constructor() {
+    this.goods = [];
+  }
+
+  static foo () {
+    console.log('static foo method');
+  }
+
+  fetchGoods() {
+
+  }
+
+  addItem(item) {
+
+  }
+
+  removeItem(id) {
+
+  }
+
+  total() {
+
+  }
+
+  render() {
+
+  }
+}
+
+class BasketItem {
+  constructor(item, basket) {
+    this.item = item;
+    this.basket = basket;
+  }
+
+  addItem() {
+    this.basket.addItem(this.item.id);
+  }
+
+  removeItem() {
+    this.basket.removeItem(this.item.id);
+  }
+
+  add() {
+    this.item.quantity += 1;
+  }
+
+  render() {
+
+  }
+}

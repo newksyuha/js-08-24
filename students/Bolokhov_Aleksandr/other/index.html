@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Hamburger</title>
+</head>
+<body>
+<div class="productBlock">
+    <div class="Product">
+    <button data-price="50" data-calories="20">Маленкий гамбургер - 50 рублей - 20 калорий</button>
+    <button data-price="100" data-calories="40">Большой гамбургер - 100рублей - 40 калорий</button>
+    <button data-price="10" data-calories="20">Cыр - 10 рублей - 20 калорий</button>
+    <button data-price="20" data-calories="5">Салат - 20 рублей - 5 калорий</button>
+    <button data-price="15" data-calories="10">Картофель - 15 рублей - 10калорий</button>
+    <span class="priseFirstProduct">0</span>
+    <span class="caloriesFirstProduct">0</span>
+    </div>
+</div>
+
+    <script>
+    "use strict";
+
+    
+class OrderFood {
+    constructor() {
+        this.productBlock = document.querySelector(".productBlock");
+    }
+    
+    renderOrderFood() {
+        let order = confirm("Вы хотите сделать заказ?");
+        console.log(order);
+        if ( order === true ) {
+            this.productBlock.style.display = "block";
+        } else {
+            alert("Вы отказались от заказа!");
+        };
+    }
+}
+
+const orderFoodFirst = new OrderFood();
+orderFoodFirst.renderOrderFood();
+
+
+
+
+    class FoodPriceAndCalories {
+        constructor() {
+            this.button = document.querySelectorAll("button");
+            this.priseFirstProduct = document.querySelector(".priseFirstProduct");
+            this.caloriesFirstProduct = document.querySelector(".caloriesFirstProduct");
+            this.sumProductFirst = [];
+            this.sumCaloriesFirst = [];
+     }
+
+     firstFoodPrice() { 
+         let sumPrice = 0;
+         for (let i=0 ; i<this.sumProductFirst.length; i++) {
+             sumPrice +=this.sumProductFirst[i];
+         }
+         this.priseFirstProduct.innerHTML = `Итого сумма: ${sumPrice}`;
+     }
+
+     firstFoodCalories() {
+         let sumCalories = 0;
+         for ( let i=0; i<this.sumCaloriesFirst.length; i++) {
+             sumCalories +=this.sumCaloriesFirst[i];
+         }
+         this.caloriesFirstProduct.innerHTML = `Итого калорий: ${sumCalories}`;
+     }
+      
+     
+
+
+
+        eventButtonClick(event) {
+            let price = event.srcElement.dataset.price;
+            let calories = event.srcElement.dataset.calories;
+            let basis = event.target.parentNode;
+            let styleButton = event.target.style;
+            if (basis.classList == "Product") {
+             styleButton.backgroundColor = "green";
+             this.sumProductFirst.push(Number(price));
+             this.sumCaloriesFirst.push(Number(calories));
+             this.firstFoodPrice();
+             this.firstFoodCalories();
+            }
+        }
+
+
+
+        buttonClick () {
+            for ( let i=0; i < this.button.length; i++) {
+                this.button[i].addEventListener("click", () => {
+                    this.eventButtonClick(event);
+                });
+            }
+        }    
+
+
+
+    }
+    const foodPriceAndCalories1 = new FoodPriceAndCalories ();
+    foodPriceAndCalories1.buttonClick();
+
+
+    </script>
+</body>
+</html>

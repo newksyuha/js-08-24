@@ -1,0 +1,72 @@
+.cart-button {
+    width: 100px;
+    font-size: 20px;
+    float: right;
+    margin-right: 50px;
+    
+}
+
+.cart-button:hover {
+    color: red;
+}
+
+.sale-button {
+    width: 100px;
+    
+}
+
+.sale-button:hover {
+    color: red;
+}
+
+body {
+    margin: 10px auto;
+    width: 800px;
+
+}
+
+header {
+    margin: 10px auto;
+    height: 50px;
+    background-color: lightgoldenrodyellow;
+}
+
+main {
+    margin: 10px auto;
+    height: 250px;
+    background-color: white;
+}
+
+.goods-item {
+    width: 120px;
+    float: left;
+    background-color: lightgoldenrodyellow;
+    border: 1px solid black;
+    margin-left: 10px;
+    text-align: center;
+
+}
+
+.goods-item p {
+    font-size: 12px;
+
+}
+
+#menu {
+    text-align: center;
+    font-size: 40px;
+    margin: 10px auto;
+    height: 60px;
+    background-color: lightgoldenrodyellow;  
+}
+
+.goodsAndButton {
+    float: left;
+    margin-left: 10px;
+    border: solid 1px black;
+    width: 140px;
+}
+
+.infoForUser {
+    color: red;
+}

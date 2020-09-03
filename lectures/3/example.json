@@ -1,0 +1,13 @@
+{
+    "foo": "sadasd",
+    "bar": 1234,
+    "baz": {
+        "boo": {
+            "some": "value"
+        }
+    },
+    "key": [
+        "array",
+        "element"
+    ]
+}
