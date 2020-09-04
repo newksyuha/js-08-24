@@ -1,164 +1,167 @@
-'use strict';
+
+  
 const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
-function sendRequest(url, method = 'GET', payload = {}) {
-    return new Promise((resolve, reject) => {
+function sendRequest(url) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest;
+  
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
 
+          if (xhr.status === 200) {
+            resolve(JSON.parse(xhr.responseText));
+          } else {
+            reject(xhr.responseText);
+          }
 
-        const xhr = new XMLHttpRequest();
+        }
+    }
 
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    resolve(xhr.responseText);
-                } else {
-                    reject(xhr.responseText)
-                }
-
-            }
-        };
-
-        xhr.open('GET', `${API}${url}`, true);
-        xhr.send(payload);
-    })
-
+    xhr.open('GET', `${API}${url}`, true);
+  
+    xhr.send();
+  });
 }
 
 class GoodsItem {
-    constructor(product_name, price, id_product) {
-        this.product_name = product_name;
-        this.price = price;
-        this.id_product = id_product;
-    }
+  constructor({ id_product, product_name, price }) {
+    this.id = id_product;
+    this.title = product_name;
+    this.price = price;
+  }
 
-    render() {
-        return `<div class="goods-item" data-title="${this.product_name}" data-price="${this.price}" data-id="${this.id}">
-            <h2>${this.product_name}</h2>
-            <p>${this.price}</p>
-            <button class="buy-btn">В корзину</button>
-        </div>`;
-    }
+  render() {
+    return `
+      <div class="goods-item" data-id="${this.id}">
+        <h3>${this.title}</h3>
+        <p>${this.price}</p>
+        <button name="add-to-basket">Buy</button>
+      </div>
+    `;
+  }
 }
 
 class GoodsList {
-    constructor() {
-        this.goods = [];
-        this.goodsItem = {};
-    }
+  constructor(basket) {
+    this.basket = basket;
+    this.goods = [];
+    this.filteredGoods = [];
+    this.fetchGoods()
+      .then(() => {
+        this.render();
+      })
+      .catch((err) => {
+        console.log('[ERROR]', err);
+      });
 
-    fetchGoods() {
-        return new Promise((resolve, reject) => {
-            sendRequest('/catalogData.json')
-                .then((result) => {
-                    this.goods = JSON.parse(result);
-                    resolve();
-                });
+    document.querySelector('.goods-list').addEventListener('click', (event) => {
+      if (event.target.name === 'add-to-basket') {
+        const id = event.target.parentElement.dataset.id;
+        const item = this.goods.find((goodsItem) => goodsItem.id_product === parseInt(id));
+        this.basket.addItem(item);
+      }
+    });
+
+    document.querySelector('.search').addEventListener('input', (event) => {
+      this.filterGoods(event.target.value);
+    });
+  }
+
+  fetchGoods() {
+    return new Promise((resolve, reject) => {
+      sendRequest('/catalogData.json')
+        .then((goods) => {
+          this.goods = goods;
+          this.filteredGoods = goods;
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
         });
-    }
-    priceSum() {
-        const totalSum = this.goods.reduce(function (accum, currentValue){
-            return accum + currentValue.price
-        },0)
-        return totalSum
-    }
+    });
+  }
 
-    render() {
-        let goodsLayout = '';
-        this.goods.forEach(({ product_name, price }) => {
-            const item = new GoodsItem(product_name, price);
-            goodsLayout += item.render();
-        });
-        document.querySelector('.goods-list').innerHTML = goodsLayout;
-    }
-    addToCart(){
-        document.querySelector('.good-list').addEventListener('click', (event) => {
-            const parent=event.target.parentElement.parent.Element
-            const product = {}
-            if(event.target.name === 'buy_btn') {
-                product.id = parent.dataset.id
-                product.name = parent.dataset.title
-                product.price = parent.dataset.price
-              }
-              if (Object.entries(product).length !== 0) cart.push(product)
-            })
-        }
-        deleteProduct() {
-            document.querySelector('.cart').addEventListener('click', (event) => {
-              const removeTag = event.target.parentElement
-              const removeId = event.target.parentElement.dataset.id
-        
-              const index = cart.findIndex((item) => item.id === removeId)
-              if (index !== -1) {
-                cart.splice(index, 1)
-                removeTag.remove()
-              }
-            })
-    }
+  total() {
+    return this.goods.reduce((acc, cur) => acc + cur.price, 0);
+  }
 
-    
+  filterGoods(value) {
+    const regexp = new RegExp(value, 'i');
+    this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name));
+    this.render();
+  }
 
-
+  render() {
+    const goodsList = this.filteredGoods.map(item => {
+      const goodsItem = new GoodsItem(item);
+      return goodsItem.render();
+    });
+    document.querySelector('.goods-list').innerHTML = goodsList.join('');
+  }
 }
-class CartItem {
-    constructor(product_name, price) {
-        this.product_name = product_name;
-        this.price = price;
-    }
 
+class Basket {
+  constructor() {
+    this.goods = [];
+  }
+
+  fetchGoods() {
+
+  }
+
+  addItem(item) {
+    const itemIndex = this.goods.findIndex((goodsItem) => goodsItem.id_product === item.id_product);
+    if (itemIndex !== -1) {
+      this.goods[itemIndex].quantity++;
+    } else {
+      this.goods.push({ ...item, quantity: 1 });
+    }
+    console.log(this.goods);
+  }
+
+  removeItem(id) {
+    const itemIndex = this.goods.findIndex((goodsItem) => goodsItem.id_product === id);
+    if (itemIndex !== -1) {
+      this.goods.splice(itemIndex, 1);
+    }
+  }
+
+  getBasketItems() {
+    return this.goods;
+  }
+
+  total() {
+
+  }
+
+  render() {
+
+  }
 }
-class CartList {
-    constructor() {
-        this.cartGoods = [];
-    }
-    addItem(item) {
-        sendRequest('/addToBasket.json', 'POST', { item })
-            .then((res) => {
-                const { result } = JSON.parse(res);
-                if (result === 1) {
-                    this.cartGoods.push(item);
-                } else {
-                    console.error('addItem Error');
-                }
 
+class BasketItem {
+  constructor(item, basket) {
+    this.item = item;
+    this.basket = basket;
+  }
 
-            });
+  addItem() {
+    this.basket.addItem(this.item.id);
+  }
 
-    }
-    deleteItem(id) {
-        sendRequest('/deleteFromBasket.json', 'DELETE', { id })
-            .then((res) => {
-                const { result } = JSON.parse(res);
-                if (result === 1) {
-                    const itemIndex = this.cartGoods.findIndex(item => item.id_product === id);
-                    if (itemIndex != -1) {
-                        this.cartGoods.splice(itemIndex, 1);
-                    }
-                } else {
-                    console.error('deleteItem Error');
-                }
+  removeItem() {
+    this.basket.removeItem(this.item.id);
+  }
 
+  add() {
+    this.item.quantity += 1;
+  }
 
-            });
+  render() {
 
-    }
-    fetchBasket() {
-        return new Promise((resolve, reject) => {
-            sendRequest('/getBasket.json')
-                .then((result) => {
-                    const { contents } = JSON.parse(result);
-                    this.cartGoods = contents;
-                    this.render();
-                    resolve();
-                });
-        });
-
-    }
-    render() {
-
-    }
-
+  }
 }
-const cart = new CartList
-const list = new GoodsList
-list.fetchGoods().then(() => list.render())
-list.addToCart();
+
+const basket = new Basket();
+const goodsList = new GoodsList(basket);
