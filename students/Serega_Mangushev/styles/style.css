@@ -13,8 +13,15 @@ body,
 html {
     font-family: 'Roboto', sans-serif;
     overflow-x: hidden;
-    background-color: #fff;
+    background-color: #fff; 
+}  
+
+input:-webkit-autofill {
+    -webkit-box-shadow:0 0 0 50px white inset; /* можно изменить на любой вариант цвета */
+    -webkit-text-fill-color: #333; 
+    border-radius: 3px;
 }
+
 
 .center-items {
     display: -webkit-box;
@@ -50,12 +57,6 @@ html {
         flex-wrap: wrap;
 }
 
-.content {
-    background-color: #f2f2f2;
-    padding: 30px;
-    border-radius: 35px;
-}
-
 .product { 
     -webkit-box-flex: 1; 
         -ms-flex: 1 30.33%; 
@@ -69,6 +70,12 @@ html {
     cursor: pointer;
     font-size: 24px; 
     background-color: transparent ;
+}  
+
+.col2{ 
+    -webkit-box-flex: 1; 
+        -ms-flex: 1 50%; 
+            flex: 1 50%;
 }
 
 .header {
@@ -79,8 +86,8 @@ html {
 
 .header::before {
   position: absolute;
-  content: ''; 
-  left: 0; 
+  content: '';
+  left: 0;
   top: 0;
   z-index: -1;
   width: 100%;
@@ -88,16 +95,16 @@ html {
   background: -webkit-gradient(linear, left top, right top, color-stop(0, #cb11ab), to(#481173)) no-repeat;
   background: -o-linear-gradient(left, #cb11ab 0, #481173 100%) no-repeat;
   background: linear-gradient(to right, #cb11ab 0, #481173 100%) no-repeat;
-} 
+}
 
 .header::after {
   position: absolute;
-  content: ''; 
-  left: 0; 
+  content: '';
+  left: 0;
   top: 15px;
   z-index: -1;
   width: 100%;
-  height: 100%; 
+  height: 100%;
   border-radius: 50%;
   background: -webkit-gradient(linear, left top, right top, color-stop(0, #cb11ab), to(#481173)) no-repeat;
   background: -o-linear-gradient(left, #cb11ab 0, #481173 100%) no-repeat;
@@ -130,7 +137,7 @@ html {
 
 .menu__search {
   cursor: pointer;
-  width: calc(100% - 400px); 
+  width: calc(100% - 400px);
   margin: 12px 0;
   padding: 12px;
   font-size: 22px;
@@ -143,12 +150,12 @@ html {
 
 @media (max-width: 992px) {
   .menu__search {
-    width: 100%; 
-    -webkit-box-ordinal-group: 2; 
-        -ms-flex-order: 1; 
+    width: 100%;
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
             order: 1;
   }
-} 
+}
 
 @media (max-width: 768px) {
   .menu__search {
@@ -199,6 +206,13 @@ html {
 .shop__product {
   margin: 10px;
   padding: 10px;
+}
+
+.shop__content {
+  background-color: #f2f2f2;
+  padding: 30px;
+  margin: 35px 0 50px 0;
+  border-radius: 35px;
 }
 
 .shop__max-price {
@@ -291,4 +305,140 @@ html {
 
 .product__btn {
   padding: 10px 10px 10px 0;
+}
+
+.contact {
+  position: relative;
+  background: url(../image/parralx.jpg) no-repeat;
+  background-size: cover;
+  min-height: 25vh;
+  background-attachment: fixed;
+}
+
+.contact::before {
+  position: absolute;
+  content: '';
+  left: 0;
+  top: 0;
+  background: url(../image/parralx.jpg) no-repeat;
+  background-size: cover;
+  width: 100%;
+  border-radius: 5px;
+  min-height: 30px;
+  background-attachment: fixed;
+  z-index: 1;
+  -webkit-transform: translate(-30%, -50%);
+      -ms-transform: translate(-30%, -50%);
+          transform: translate(-30%, -50%);
+}
+
+.contact__groop {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin: 60px 0 0 0;
+}
+
+@media(max-width: 768px) {
+
+  .contact__groop {
+    display: block;
+  }
+}
+
+.contact__title {
+  position: relative;
+  font-size: 38px;
+  color: #fff;
+}
+
+.info-c__subtitle {
+  font-size: 42px;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+@media(max-width: 768px) {
+
+  .info-c__subtitle {
+    font-size: 28px;
+  }
+}
+
+.info-c__text { 
+  padding: 10px 0 0 0;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+
+.contact__title_decor::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  height: 3px;
+  background-color: #66CCFF;
+  border-radius: 50%;
+}
+
+.contact__form {
+  width: calc(100% - 100px);
+  margin: 25px 0 0 0;
+  padding: 15px;
+  border: 10px solid #49117328;
+}
+
+@media(max-width: 768px) {
+
+  .contact__form {
+    width: 100%;
+    margin: 25px 0 0 0;
+    padding: 15px;
+    border: 10px solid #49117328;
+  }
+}
+
+
+
+.form-c__contact {
+  resize: none;
+  width: 100%;
+  margin: 10px 0 0 0;
+  color: #fff;
+  background-color: transparent !important;
+  padding: 3px;
+  font-size: 24px;
+  border-radius: 1px;
+  border-bottom: 2px solid #66ccff8f;
+  -webkit-transition: 0.2s;
+  -o-transition: 0.2s;
+  transition: 0.2s;
+}
+
+.form-c__contact:focus {
+  border-bottom: 2px solid #66CCFF;
+}
+
+.submit-btn { 
+  padding: 10px 0;
+  color: #fff;
+} 
+
+.contact__invalid{  
+  visibility: inherit;   
+  opacity: 1; 
+  padding: 10px 0 0 0;  
+  letter-spacing: 1px;
+  color: #FF3300; 
+  -webkit-transition: 0.2s; 
+  -o-transition: 0.2s; 
+  transition: 0.2s;
+} 
+
+.invalid-hidden{ 
+  visibility: hidden;   
+  opacity: 0;
 }

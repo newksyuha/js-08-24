@@ -52,7 +52,7 @@ class ProductСard {
     return component;
   }
 }
- 
+  
 class Goods {
   constructor() {
     this.getVariables();
@@ -97,7 +97,7 @@ class Goods {
   }
 }
 const productСard = new Goods();
-     
+  
 class Basket{ 
     constructor(){  
         this.goods = productСard.goods 
@@ -120,4 +120,74 @@ class Basket{
         this.products.splice(this.products.findIndex((element) => element.id === id));
     }  
 } 
-    
+; 
+class Form {
+  constructor() {
+    this.submitForm = document.querySelector(".contact__form");
+    this.rules = {
+      userName: /^[А-ЯЁA-Z]{1}[а-яёa-z]{1,23}$/g,
+      phone: /^(\s*)?(\+)?([- _():=+]?\d[- _():=+]?){10,14}(\s*)?$/,
+      email: /^([a-z0-9_\.-]+)@([a-z0-9_\.-]+)\.([a-z\.]{2,6})$/,
+    };
+  }
+
+  validator(e) {
+    this.inputs = document.querySelectorAll(
+      "input[data-check], textarea[data-check]"
+    );
+    this.inputs.forEach((input) => {
+      const paragraph = input.parentElement.children[0];
+      if (input.value && input.value.length > 0) this.checkRegValidator(e);
+      else { 
+        paragraph.innerHTML = `Поле не может быть пустым`
+        paragraph.classList.remove("invalid-hidden");
+        e.preventDefault();
+      }
+    });
+  }
+
+  checkRegValidator(e) {
+    this.inputs.forEach((input, i) => {
+      const paragraph = input.parentElement.children[0];
+      paragraph.classList.add("invalid-hidden");
+      switch (i) {
+        case 0:
+          if (this.rules.userName.test(input.value)) console.log('Имя верное!');
+          else { 
+            paragraph.innerHTML = `Недопустимое имя`;
+            paragraph.classList.remove("invalid-hidden");
+            e.preventDefault();
+          }
+          break;
+        case 1:
+            if (this.rules.phone.test(input.value)) console.log(true);
+            else { 
+              paragraph.innerHTML = `Телефон должен соответствовать маски`;
+              paragraph.classList.remove("invalid-hidden");
+              e.preventDefault();
+            }
+          break;
+        case 2:
+            if (this.rules.email.test(input.value)) console.log(true);
+            else { 
+              paragraph.innerHTML = `Маил должен быть настоящим`;
+              paragraph.classList.remove("invalid-hidden");
+              e.preventDefault();
+            }
+          break;
+        default:
+            Console.warn('Произошла ошибка отправки формы.');
+      }
+    });
+  }
+}
+const form = new Form();
+
+form.submitForm.addEventListener("submit", (event) => {
+  form.validator(event);
+});
+;
+ 
+//Временная...
+//const text = `'В этом тексте будет замена только, если 'кавычка' находится в начале или в конце.'`;
+//text.replace(/[^`]'^'|'$/gm, '"');
