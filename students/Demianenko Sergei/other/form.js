@@ -2,10 +2,10 @@ class Validation {
     constructor(form){
         this.form = form;
         this.errors = {
-            name: "имя должно содержать только буквы",
-            phone: "телефон должен иметь формат +7(000)000-0000",
-            email: "E-mail должен иметь вид mail@mail.ru",
-            message: "сообщение не должно быть пустым",
+            name: "Имя должно содержать только буквы.",
+            phone: "Телефон должен имеет вид +7(000)000-0000",
+            email: "E-mail должен имееть вид mymail@mail.ru",
+            message: "Сообщение не должно быть пустым",
         }
         this.patterns = {
             name: /^[a-zа-я]+$/i,
