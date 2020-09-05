@@ -1,6 +1,6 @@
-"use strict";
+"use strict"
 
-const goods = [
+/* const goods = [
     {
         //        title: 'Honda NC 750',
         img: 'img/honda_NC_750_XD_2018.jpg',
@@ -21,94 +21,174 @@ const goods = [
         //        img: 'img/Honda_NC_750_XD_2018-4.jpg',
         price: 11000,
     },
-];
+]; */
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
+function makeGETRequest(url) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest;
+      
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+    
+              if (xhr.status === 200) {
+                resolve(JSON.parse(xhr.responseText));
+              } else {
+                reject(xhr.responseText);
+              }
+    
+            }
+        }
+    
+        xhr.open('GET', `${API}${url}`, true);
+      
+        xhr.send();
+      });
+    }
 class GoodsItem {
     constructor({
-        title,
-        img,
+        id_product,
+        product_name,
         price
     }) {
-        this.title = title;
-        this.img = img;
+        this.id_product = id_product;
+        this.title = product_name;
         this.price = price;
     }
     render() {
         return `
-            <div class="goods-item">
+            <div class="goods-item" data-id="${this.id}">
                 <h3>${this.title}</h3>
-                <div><img src=${this.img} width="250px" height="200px"></div>
                 <p>${this.price}USD</p>
-                <button class="btn">Купить</button>
+                <button name="add-to-basket">Купить</button>
             </div>
         `;
     }
 };
 
 class GoodsList {
-    constructor() {
+    constructor(basket) {
+        this.basket = basket;
         this.goods = [];
-        this.fetchGoods();
-    }
+        this.filteredGoods = [];
+        this.fetchGoods()
+        .then(() => {
+            this.render();
+        })
+        .catch((err) => {
+            console.log('[ERROR]', err);
+        });
+        document.querySelector('.goods-list').addEventListener('click', (event) => {
+            if (event.target.name === 'add-to-basket') {
+              const id = event.target.parentElement.dataset.id;
+              const item = this.goods.find((goodsItem) => goodsItem.id_product === parseInt(id));
+              this.basket.addItem(item);
+            }
+          });
+      
+          document.querySelector('.search').addEventListener('input', (event) => {
+            this.filterGoods(event.target.value);
+          });
+        }
     fetchGoods() {
-        this.goods = [
-            {
-                title: 'Honda NC 750',
-                img: 'img/honda_NC_750_XD_2018.jpg',
-                price: 12000
-    },
-            {
-                title: 'Honda New CB500X',
-                img: 'img/honda_CB500X.jpg',
-                price: 8500
-    },
-            {
-                title: 'NC 750 S-1',
-                img: 'img/NC_750_S-1.jpg',
-                price: 10500
-    },
-            {
-                title: 'NC 750 XD 2018',
-                img: 'img/Honda_NC_750_XD_2018-4.jpg',
-                price: 11000
-    },
-];
+        return new Promise((resolve, reject) => {
+       
+        makeGETRequest('/catalogData.json')
+        .then((goods) => {
+            this.goods = goods;
+            this.filteredGoods = goods;
+            resolve();
+        })
+           .catch((err) => {
+               reject(err);
+           }); 
+          });
     }
+    total() {
+        return this.goods.reduce((acc, cur) => acc + cur.price, 0);
+  }    
+    filterGoods(value){
+        const  regexp = new RegExp(value, 'i');
+        this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name));
+        this.render();
+    }
+
     render() {
-        const goodsList = this.goods.map(item => {
+        const goodsList = this.filteredGoods.map(item => {
             const goodsItem = new GoodsItem(item);
             return goodsItem.render();
         });
-        document.querySelector('.goods-list').innerHTML = goodsList.join('');
-    }
-
-
-//Метод подсчета суммарной стоимости продуктов
-
-    getTotalSumProduct() {
-        let totalSum = 0;
-        for (let product of this.goods) {
-            totalSum += product.price;
-        }
-        console.log(totalSum);
-        return totalSum;
-    }
-
-    renderTotalSumProduct() {
-        const blockSum =
-            document.querySelector('.btn');
-         blockSum.insertAdjacentHTML('afterend', `<br><p>Стоимость всех продуктов</p>${this.getTotalSumProduct()}`);
-    }
+       
+    document.querySelector('.goods-list').innerHTML = goodsList.join('');
+  }
 }
-const goodsList = new GoodsList();
-goodsList.render();
-goodsList.renderTotalSumProduct();
+ 
+class Basket {
+  constructor() {
+    this.goods = [];
+  }
 
+  fetchGoods() {
 
+  }
 
-//Создаем пустые классы для Корзины товаров и Элемента корзины товаров
+  addItem(item) {
 
-class cartButton {
+    const itemIndex = this.goods.findIndex((goodsItem) => goodsItem.id_product === item.id_product);
+    if (itemIndex !== -1) {
+      this.goods[itemIndex].quantity++;
+    } else {
+      this.goods.push({ ...item, quantity: 1 });
+    }
+    console.log(this.goods);
+  }
+
+  removeItem(id) {
+    const itemIndex = this.goods.findIndex((goodsItem) => goodsItem.id_product === id);
+    if (itemIndex !== -1) {
+      this.goods.splice(itemIndex, 1);
+    }
+  }
+  getBasketItems() {
+    return this.goods;
+  }
+
+  total() {
+
+  }
+
+  render() {
+
+  }
+}
+
+class BasketItem {
+  constructor(item, basket) {
+    this.item = item;
+    this.basket = basket;
+  }
+
+  addItem() {
+    this.basket.addItem(this.item.id);
+  }
+
+  removeItem() {
+    this.basket.removeItem(this.item.id);
+  }
+
+  add() {
+    this.item.quantity += 1;
+  }
+
+  render() {
+
+  }
+}
+
+const basket = new Basket();
+const goodsList = new GoodsList(basket);
+
+/* class cartButton {
     constructor(){
         
     }
@@ -136,4 +216,23 @@ class elementCartButton {
     deleteElementCartButton(){
         //метод удаляющий элемент с корзины
     }
-}
+} */
+
+   
+  
+//Метод подсчета суммарной стоимости продуктов
+/* 
+    getTotalSumProduct() {
+        let totalSum = 0;
+        for (let product of this.goods) {
+            totalSum += product.price;
+        }
+        console.log(totalSum);
+        return totalSum;
+    }
+
+    renderTotalSumProduct() {
+        const blockSum =
+            document.querySelector('.btn');
+         blockSum.insertAdjacentHTML('afterend', `<br><p>Стоимость всех продуктов</p>${this.getTotalSumProduct()}`);
+    } */
