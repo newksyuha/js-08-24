@@ -1,287 +1,137 @@
-const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
-
-function makeGETRequest(url, callback) {
-  let xhr;
-
-  if (window.XMLHttpRequest) {
-    xhr = new XMLHttpRequest();
-  } else if (window.ActiveXObject) {
-    xhr = new ActiveXObject("Microsoft.XMLHTTP");
-  }
-
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      callback(xhr.responseText);
-    }
-  }
-
-  xhr.open('GET', url, true);
-  xhr.send();
-}
+const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses'
 
 function makeGETRequestPromise(url) {
   return new Promise((resolve, reject) => {
-    let xhr;
+    let xhr
 
     if (window.XMLHttpRequest) {
-      xhr = new XMLHttpRequest();
+      xhr = new XMLHttpRequest()
     } else if (window.ActiveXObject) {
-      xhr = new ActiveXObject("Microsoft.XMLHTTP");
+      xhr = new ActiveXObject("Microsoft.XMLHTTP")
     }
 
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
-        resolve(xhr.responseText)
+        resolve(JSON.parse(xhr.responseText))
       }
     }
 
-    xhr.open('GET', url, true);
-    xhr.send();
-  });
+    xhr.open('GET', url, true)
+    xhr.send()
+  })
 }
 
-class FetchButton {
-  constructor(goodsList, btnText, fetchFn, renderFn) {
-    this.goodsList = goodsList
-    this.text = btnText
-    this.fetch = fetchFn
-    this.render = renderFn
+class GoodsItem {
+  constructor(product_id, product_name, price) {
+    this.id = product_id
+    this.title = product_name
+    this.price = price
   }
 
-  create(fetchFrom) {
-    const btn = document.createElement('button')
-
-    btn.classList.add('fetch-btn')
-    btn.innerHTML = this.text
-
-    btn.addEventListener('click', () => {
-      if (this.text.includes('return')) {
-        this.fetch.call(this.goodsList)
-          .then(() => this.render.call(this.goodsList, fetchFrom))
-      } else {
-        this.fetch.call(this.goodsList, () => {
-          this.render.call(this.goodsList, fetchFrom)
-        })
-      }
-    })
-    return btn
+  render() {
+    return `
+      <div class="goods-item" data-id="${this.id}">
+        <h3><b>Name: </b>${this.title}</h3>
+        <p><b>Price: </b>${this.price}&#36;</p>
+        <button class="goods-item__btn" name="add-to-cart">Buy</button>
+        <button class="goods-item__btn" name="remove-from-cart">Remove</button>
+      </div>
+    `
   }
 }
 
 class GoodsList {
-  constructor() {
-    this.goods = [];
+  constructor(cart) {
+    this.goods = []
+    this.filteredGoods = []
+    this.cart = cart
     this.totalPrice = 0
+    this.fetchGoodsPromise()
+      .then(() => this.render())
+
+    document.querySelector('.goods-list').addEventListener('click', (event) => {
+      if (event.target.name === 'add-to-cart') {
+        const id = event.target.parentElement.dataset.id
+        const item = this.goods.find((goodsItem) => goodsItem.id_product === parseInt(id))
+
+        this.cart.add({...item, quantity: 1})
+      }
+    })
+
+    document.querySelector('.goods-list').addEventListener('click', (event) => {
+      if (event.target.name === 'remove-from-cart') {
+        const id = event.target.parentElement.dataset.id
+        this.cart.remove(parseInt(id))
+      }
+    })
+
+    document.querySelector('.search').addEventListener('input', (event) => {
+      this.filterGoods(event.target.value)
+    })
+
   }
 
-  fetchGoods(cb) {
-    makeGETRequest(`${API_URL}/catalogData.json`, (goods) => {
-      this.goods = JSON.parse(goods);
-      cb()
+  fetchGoodsPromise() {
+    return new Promise((resolve, reject) => {
+      makeGETRequestPromise(`${API_URL}/catalogData.json`)
+      .then(res => {
+        this.goods = res
+        this.filteredGoods = res
+        resolve()
+      })
     })
   }
 
-  fetchGoodsPromise(cb) {
-    makeGETRequestPromise(`${API_URL}/catalogData.json`)
-      .then(res => JSON.parse(res))
-      .then(res => this.goods = res)
-      .then(() => cb())
-  }
-
-  fetchGoodsReturnPromise() {
-    return makeGETRequestPromise(`${API_URL}/catalogData.json`)
-      .then(res => JSON.parse(res))
-      .then(res => this.goods = res)
-  }
-
-  fetchGoodsFetch(cb) {
-    fetch(`${API_URL}/catalogData.json`)
-      .then(res => res.json())
-      .then(res => this.goods = res)
-      .then(() => cb())
+  filterGoods(value) {
+    const regexp = new RegExp(value, 'i')
+    this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name))
+    this.render()
   }
 
   _calcTotalPrice() {
-    this.goods.forEach((good) => this.totalPrice += good.price)
+    this.totalPrice = 0
+    this.filteredGoods.forEach((good) => this.totalPrice += good.price)
   }
 
   _renderTotalPrice() {
     this._calcTotalPrice()
-
-    const div = document.createElement('div')
-
-    div.classList.add('total-price')
-    div.innerHTML = `<b>Total price:</b> ${this.totalPrice}&#36;`
-
-    return div
-  }
-
-  render(fetchFrom) {
-    const fromHtml = `<h3 class='from-html'>${fetchFrom}</h3>`
-    this.totalPrice = 0
-    document.querySelector('.goods-list').innerHTML = fromHtml
-    this.goods.forEach((good) => {
-      const goodItem = new GoodsItem(good.product_name, good.price, 1);
-      document.querySelector('.goods-list').appendChild(goodItem.render())
-      ;
-    });
-    document.querySelector('.goods-list').appendChild(this._renderTotalPrice())
-    document.querySelector('.goods-list').appendChild(document.createElement('hr'))
-  }
-
-  renderGoodsPromise(fetchFrom) {
-    const fromHtml = `<h3 class='from-html'>${fetchFrom}</h3>`
-    document.querySelector('.goods-list').innerHTML += fromHtml
-    this.goods.forEach((good) => {
-      const goodItem = new GoodsItem(good.product_name, good.price, 1);
-      document.querySelector('.goods-list').appendChild(goodItem.render())
-    });
-    document.querySelector('.goods-list').appendChild(this._renderTotalPrice())
-    document.querySelector('.goods-list').appendChild(document.createElement('hr'))
-  }
-
-  renderGoodsReturnPromise(fetchFrom) {
-    const fromHtml = `<h3 class='from-html'>${fetchFrom}</h3>`
-    document.querySelector('.goods-list').innerHTML += fromHtml
-    this.goods.forEach((good) => {
-      const goodItem = new GoodsItem(good.product_name, good.price, 1);
-      document.querySelector('.goods-list').appendChild(goodItem.render())
-    });
-    document.querySelector('.goods-list').appendChild(this._renderTotalPrice())
-    document.querySelector('.goods-list').appendChild(document.createElement('hr'))
-  }
-
-  renderGoodsFetch(fetchFrom) {
-    const fromHtml = `<h3 class='from-html'>${fetchFrom}</h3>`
-    document.querySelector('.goods-list').innerHTML += fromHtml
-    this.goods.forEach((good) => {
-      const goodItem = new GoodsItem(good.product_name, good.price, 1);
-      document.querySelector('.goods-list').appendChild(goodItem.render())
-    });
-    document.querySelector('.goods-list').appendChild(this._renderTotalPrice())
-    document.querySelector('.goods-list').appendChild(document.createElement('hr'))
-  }
-}
-
-class GoodsItem {
-  constructor(title, price, quantity) {
-    this.product_name = title;
-    this.price = price;
-    this.quantity = quantity;
-  }
-
-  _addToCart() {
-    const CartInstance = new Cart()
-    const cartItem = new CartItem(this.product_name, this.price, this.quantity)
-    CartInstance.add(cartItem)
-    CartInstance.render()
-  }
-
-  _removeFromCart() {
-    const CartInstance = new Cart()
-    CartInstance.remove()
-    console.log(CartInstance.cart)
-  }
-
-  render() {
-    const div = document.createElement('div')
-    const name = document.createElement('h3')
-    const price = document.createElement('p')
-    const addBtn = document.createElement('button')
-    const removeBtn = document.createElement('button')
-
-    name.innerHTML = `<b>Name: </b>${this.product_name}`
-    price.innerHTML = `<b>Price: </b>${this.price}&#36;`
-
-    div.classList.add('goods-item')
-
-    addBtn.innerText = 'Add'
-    addBtn.classList.add('goods-item__btn')
-    addBtn.addEventListener('click', () => {
-      this._addToCart()
-    })
-
-    removeBtn.innerText = 'Remove'
-    removeBtn.classList.add('goods-item__btn')
-    removeBtn.addEventListener('click', () => {
-      this._removeFromCart()
-    })
-
-    div.appendChild(name)
-    div.appendChild(price)
-    div.appendChild(addBtn)
-    div.appendChild(removeBtn)
-
-    return div
-  }
-}
-
-class CartItem {
-  constructor(title, price, quantity) {
-    this.title = title
-    this.price = price
-    this.quantity = quantity
-  }
-
-  addItem() {
-    this.cart.addItem(this.name)
-  }
-
-  removeItem() {
-    this.cart.removeItem(this.name)
-  }
-
-  addQuantity() {
-    const CartInstance = new Cart()
-    this.quantity += 1
-    CartInstance.render()
-  }
-
-  render() {
-    const div = document.createElement('div')
-    const btn = document.createElement('button')
-
-    btn.innerHTML = '+'
-    btn.addEventListener('click', () => {
-      this.addQuantity()
-    })
-
-    div.innerHTML = `
-      <h4><b>Name: </b>${this.title}</h4>
-      <p><b>Price: </b>${this.price}</p>
-      <p class="quantity"><b>Quantity: </b>${this.quantity}</p>
+    return `
+      <div class="total-price">
+        <b>Total price:</b> ${this.totalPrice}&#36;
+      </div>
     `
-    div.classList.add('cart__item')
-    div.appendChild(btn)
+  }
 
-    return div
+  render() {
+    let listHtml = '';
+    this.filteredGoods.forEach(good => {
+      const goodItem = new GoodsItem(good.id_product, good.product_name, good.price);
+      listHtml += goodItem.render();
+    });
+    document.querySelector('.goods-list').innerHTML = listHtml + this._renderTotalPrice();
   }
 }
 
 class Cart {
-  cart = []
-
   constructor() {
-    if (Cart._instance) {
-      return Cart._instance
-    }
-    Cart._instance = this
-  }
-
-  fetchGoods() {
-
+    this.cart = []
   }
 
   add(product) {
-    this.cart.push(product)
+    const itemIndex = this.cart.findIndex(item => item.id_product === product.id_product)
+    if (itemIndex !== -1) this.cart[itemIndex].quantity++
+    else this.cart.push(product)
+    this.render()
   }
 
-  remove(product) {
-    this.cart.splice(this.cart.indexOf(product, 1))
+  remove(id) {
+    const itemIndex = this.cart.findIndex(item => item.id_product === id)
+    if (itemIndex !== -1) this.cart.splice(itemIndex, 1)
+    this.render()
   }
 
   total() {
-
+    return this.cart
   }
 
   render() {
@@ -290,21 +140,37 @@ class Cart {
     if (cartPlace) cartPlace.innerHTML = ''
 
     this.cart.forEach(item => {
-      cartPlace.appendChild(item.render())
+      cartPlace.innerHTML += new CartItem(item).render()
     })
   }
 }
 
-const CartInstance = new Cart()
+class CartItem {
+  constructor(item) {
+    this.title = item.product_name
+    this.price = item.price
+    this.quantity = item.quantity
+  }
 
-const list = new GoodsList();
+  addItem() {
+  }
 
-const btn1 = new FetchButton(list, 'Fetch (http)', list.fetchGoods, list.render)
-const btn2 = new FetchButton(list, 'Fetch (promise)', list.fetchGoodsPromise, list.renderGoodsPromise)
-const btn3 = new FetchButton(list, 'Fetch (return promise)', list.fetchGoodsReturnPromise, list.renderGoodsReturnPromise)
-const btn4 = new FetchButton(list, 'Fetch (fetch)', list.fetchGoodsFetch, list.renderGoodsFetch)
+  removeItem() {
+  }
 
-document.querySelector('.btns-wrp').appendChild(btn1.create('From http'))
-document.querySelector('.btns-wrp').appendChild(btn2.create('From promise'))
-document.querySelector('.btns-wrp').appendChild(btn3.create('From a returned promise'))
-document.querySelector('.btns-wrp').appendChild(btn4.create('From fetch'))
+  addQuantity() {
+  }
+
+  render() {
+    return `
+      <div class="cart__item">
+        <h4><b>Name: </b>${this.title}</h4>
+        <p><b>Price: </b>${this.price}&#36;</p>
+        <p class="quantity"><b>Quantity: </b>${this.quantity}</p>
+      </div>
+    `
+  }
+}
+
+const cart = new Cart()
+const list = new GoodsList(cart)

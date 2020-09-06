@@ -17,10 +17,17 @@ hr {
 .header {
   padding: 1em;
   background: #FFDC40;
-  box-shadow: 0 3px 12px 5px;
+  box-shadow: 0 3px 17px 3px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
+}
+
+.search {
+  margin: 0 1rem 0 0;
+  padding: 15px;
+  border: none;
+  font-size: 1.5em;
 }
 
 .cart-button {
@@ -70,7 +77,7 @@ hr {
 }
 
 .goods-item {
-  width: 23%;
+  width: 18%;
   border: 2px solid #A64800;
   padding: .3em;
   box-sizing: border-box;
@@ -78,11 +85,16 @@ hr {
   background: #FF6F00;
 }
 
+.goods-item h3,
+.goods-item p {
+  margin: .5em 0;
+}
+
 .goods-item__btn {
   border: none;
   padding: .5em;
   border-radius: 4px;
-  width: 47%;
+  width: 40%;
   margin: 0 auto;
   background: #05296e;
   color: #fff;
@@ -127,16 +139,29 @@ hr {
   flex-wrap: wrap;
 }
 
-.cart__item{
-  width: 18%;
-  margin: 1%;
-  background: #fff;
-  padding: .5em;
+.cart__item {
+	width: 18%;
+	margin: 1%;
+	background: #fff;
+	padding: .5em;
+	box-shadow: -2px -2px 7px 3px #a64800;
+	border-radius: 8px;
+}
+
+@media screen and (max-width: 990px) {
+  .goods-item {
+    width: 30%;
+    margin: 1%;
+  }
 }
 
 @media screen and (max-width: 768px) {
   .goods-item {
     width: 48%;
     margin: 1%;
+  }
+
+  .cart__item {
+    width: 40%;
   }
 }
