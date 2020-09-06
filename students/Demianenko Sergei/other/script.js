@@ -33,7 +33,7 @@ class GoodsItem {
     return `
       <div class="goods-item" data-id="${this.id}">
         <h3>${this.title}</h3>
-        <p>${this.price}</p>
+        <p>${this.price} руб.</p>
         <button name="add-to-basket">Buy</button>
       </div>
     `;
