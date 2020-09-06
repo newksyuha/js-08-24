@@ -1,4 +1,37 @@
+const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
+function makeGETRequest(url) {
+  
+  
+  return new Promise((resolve, reject) => {
+	  let xhr;
+
+  if (window.XMLHttpRequest) {
+    xhr = new XMLHttpRequest();
+  } else if (window.ActiveXObject) { 
+    xhr = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+
+  /*xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      resolve(xhr.responseText);
+    }
+  }*/
+  
+  xhr.onload = function() {
+      if (this.status != 200) {
+      let error = new Error(this.statusText);
+      error.code = this.status;
+      reject(error);
+      } else {
+		  resolve(xhr.responseText);
+	  }
+    };
+
+  xhr.open('GET', url, true);
+  xhr.send();
+	  });
+}
 
 class GoodsItem {
   constructor(title, price) {
@@ -14,18 +47,20 @@ class GoodsList {
   constructor() {
     this.goods = [];
   }
-  fetchGoods() {
-    this.goods = [
-      { title: 'Shirt', price: 150 },
-      { title: 'Socks', price: 50 },
-      { title: 'Jacket', price: 350 },
-      { title: 'Shoes', price: 251 },
-    ];
+  fetchGoods(cb) {
+    makeGETRequest(`${API_URL}/catalogData.json`)
+	.then((text) => {
+  console.log(text);      
+  this.goods = JSON.parse(text);
+  cb();
+}, (error) => {
+  alert(`Rejected: ${error}`);
+});
   }
   render() {
     let listHtml = '';
     this.goods.forEach(good => {
-      const goodItem = new GoodsItem(good.title, good.price);
+      const goodItem = new GoodsItem(good.product_name, good.price);
       listHtml += goodItem.render();
     });
     document.querySelector('.goods-list').innerHTML = listHtml;
@@ -100,14 +135,18 @@ class Cart {
 
 
 const list = new GoodsList();
-list.fetchGoods();
-list.render();
-list.getTotalPrice();
+list.fetchGoods(() => {
+  list.render();
+  list.getTotalPrice();
+});
+
 
 /*const cart = new Cart();
 cart.addItem(list.goods[0], 2);
 cart.addItem(list.goods[1], 4);
 cart.render();*/
+
+
 
 
 

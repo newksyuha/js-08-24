@@ -1,0 +1,47 @@
+/* цвета подобраны https://colorscheme.ru/ */
+
+body {
+    background-color: #BF8F30;
+    margin: 0 auto;
+}
+
+header {
+    background-color: #FFA900;
+    min-height: 60px;
+}
+.cart-button {
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    margin: 10px;
+    float: right;
+    background: #FFBE40;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    color: #fff;
+	
+}
+.cart-button:hover {
+    background-color: #A66E00;
+}
+
+.cart-button:active {
+    background-color: #FFCF73;
+    color: #A66E00	;
+}
+
+.goods-list {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-around;
+}
+
+
+.goods-item {
+    box-shadow: 0 3px 6px rgba(0,0,0,.2);
+    flex-basis: calc(25% - 40px);
+    text-align: center;
+	border-radius: 5px;
+}
