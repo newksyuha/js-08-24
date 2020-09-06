@@ -43,22 +43,3 @@ button {
     border:1px solid black;
     background:darkgray
 }
-
-.cart-list {
-    height: 200px;
-    width: 400px;
-    border:1px solid black;
-    background:darkgray;
-    position: absolute;
-    margin-top: 50px;
-    display: none;
-}
-
-.cart-list.show {
-    display: block;
-}
-
-.basket-item {
-    display: flex;
-    justify-content: space-between;
-}
