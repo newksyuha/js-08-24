@@ -190,4 +190,4 @@ form.submitForm.addEventListener("submit", (event) => {
  
 //Временная...
 //const text = `'В этом тексте будет замена только, если 'кавычка' находится в начале или в конце.'`;
-//text.replace(/[^`]'^'|'$/gm, '"');
+//text.replace(/(^'|'$)/gm, '"');
