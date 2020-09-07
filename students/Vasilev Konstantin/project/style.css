@@ -43,7 +43,6 @@ main {
 }
 
 .goods-list {
-    height: 150px;
     padding-top: 50px;
     display: flex;
     justify-content: space-evenly;
@@ -66,3 +65,10 @@ h3 {
     color: #FFFFFF;
 }
 
+.goods-item img {
+    width: 100px;
+}
+
+span:after {
+    content: "";
+}

@@ -9,6 +9,10 @@ header{
     justify-content: flex-end;
 }
 
+.h2{
+    color: brown;
+}
+
 .cart-button{
     margin: 5px 10px 5px 0px;
     height: 20px;
@@ -23,6 +27,18 @@ header{
 }
 
 .goods-item{
+    width: 150px;
+    height: 200px;
+    border: 1px solid black;
+    text-align: center;
+    margin-top: 5px;
+}
+.goods-basket{
+    display: flex;
+    justify-content: space-around;
+}
+
+.basket-list{
     width: 150px;
     height: 200px;
     border: 1px solid black;
