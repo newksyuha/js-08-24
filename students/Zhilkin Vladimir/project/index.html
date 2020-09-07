@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>eShop</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<h1 class="head-name">Интернет-магазин</h1>
+	<header class="head-basket">
+		<div class="container">
+			<div>
+				<button class="cart-button" data-load="response.json" onclick="loadBut();">Товары</button>
+			</div>
+			<div>
+				<button class="cart-button" onclick="viewCart()">Корзина <span id="cartcoint"></span></button>
+			</div>
+		</div>
+	</header>
+	<main class="container">
+		<div class="goods-list"></div>
+		<div class="goods-total"></div>
+	</main>
+	<script src="script.js"></script>
+</body></html>

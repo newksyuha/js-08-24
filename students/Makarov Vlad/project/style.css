@@ -1,0 +1,41 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+
+header {
+    background-color: #00FFFF;
+    padding-top: 10px;
+    padding-bottom: 10px; 
+    padding-right: 10px;
+    display: flex; 
+    justify-content: flex-end;  
+    margin-bottom: 2.5%;
+    
+}
+
+.cart-button {
+    border-radius: 15px;
+    width: 140px;
+    height: 50px;  
+    background-color: #E0FFFF;
+}
+
+
+.goods-list{
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.goods-item{
+    background-color: #ccc;
+    text-align: center;
+    width: 15%;
+    min-height: 200px;
+    padding: 55px;
+    box-sizing: border-box;
+    outline: 2px solid black;
+}

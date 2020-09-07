@@ -21,7 +21,7 @@ function sendRequest(url) {
     xhr.send();
   });
 }
-/*
+
 class GoodsItem {
   constructor({ id_product, product_name, price }) {
     this.id = id_product;
@@ -33,7 +33,7 @@ class GoodsItem {
     return `
       <div class="goods-item" data-id="${this.id}">
         <h3>${this.title}</h3>
-        <p>${this.price}</p>
+        <p>${this.price} руб.</p>
         <button name="add-to-basket">Buy</button>
       </div>
     `;
@@ -163,38 +163,3 @@ class BasketItem {
 
 const basket = new Basket();
 const goodsList = new GoodsList(basket);
-*/
-
-const app = new Vue({
-  el: '#app',
-  data: {
-    goods: [],
-    searchText: '',
-  },
-  created() {
-    this.fetchGoods();
-  },
-  computed: {
-    filteredGoods() {
-      const regexp = new RegExp(this.searchText, 'i');
-      return this.goods.filter(item => regexp.test(item.product_name));
-    },
-    total() {
-      return this.goods.reduce((acc, cur) => acc + cur.price, 0);
-    },
-  },
-  methods: {
-    fetchGoods() {
-      return new Promise((resolve, reject) => {
-        sendRequest('/catalogData.json')
-          .then((goods) => {
-            this.goods = goods;
-            resolve();
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
-    },
-  },
-});
