@@ -118,3 +118,20 @@ class BasketItem {
 
   }
 }
+
+//feedback
+
+const sendFeedBack = () => {
+  let name = document.getElementById('name').nodeValue;
+  let phone = document.getElementById('mobile').nodeValue;
+  let email = document.getElementById('email').nodeValue;
+  let msg = document.getElementById('message').nodeValue;
+console.log(name);
+console.log(phone);
+console.log(email);
+console.log(msg);
+  //let str = textBefore.value;
+  //document.getElementById('result').innerHTML = str.replace(/^'|(\s)'|'(\s)|'$/g, '$1"$2');
+  
+};
+document.getElementById('sendBut').addEventListener('click', sendFeedBack);
