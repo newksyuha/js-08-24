@@ -34,16 +34,16 @@ class GoodsItem {
 class GoodsList {
     constructor() {
         this.goods = [];
-        this.fetchGoods().then(this.render());
+        this.fetchGoods();
     }
 
     fetchGoods() {
-        return new Promise((resolve, reject) => {
-            sendRequest('/catalogData.json').then((resolve) => {
+        sendRequest('/catalogData.json').then((resolve) => {
                 this.goods = resolve;
-                resolve();
-            });
-        })
+            })
+            .then((resolve) => {
+                this.render();
+            })
     }
 
     total() {
