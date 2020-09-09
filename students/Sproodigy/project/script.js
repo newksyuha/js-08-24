@@ -1,176 +1,159 @@
-const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses'
-
-function makeGETRequestPromise(url) {
-  return new Promise((resolve, reject) => {
-    let xhr
-
-    if (window.XMLHttpRequest) {
-      xhr = new XMLHttpRequest()
-    } else if (window.ActiveXObject) {
-      xhr = new ActiveXObject("Microsoft.XMLHTTP")
+const app = new Vue({
+  el: '#app',
+  data: {
+    API_URL: 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses',
+    API_URL_CATALOG: 'catalogData.json',
+    goods: [],
+    filteredGoods: [],
+    searchLine: '',
+    cart: [
+      {product_name: 'Some', price: '1000', quantity: 1},
+      {product_name: 'Another', price: '2000', quantity: 4},
+    ],
+    isVisibleCart: false,
+    emptyCartMessage: 'Cart is empty!',
+    emptyGoodsListMessage: 'No data!',
+  },
+  created() {
+    this.fetchGoods()
+  },
+  computed: {
+    totalPrice() {
+      return this.goods.reduce((acc, good) => acc + good.price, 0)
+    },
+    checkGoodsListData() {
+      return this.filteredGoods.length
+    },
+  },
+  methods: {
+    fetchGoods() {
+      fetch(`${this.API_URL}/${this.API_URL_CATALOG}`)
+        .then(goods => goods.json())
+        .then(goods => this.goods = goods)
+        .then(goods => this.filteredGoods = goods)
+    },
+    filterGoods() {
+      const regexp = new RegExp(this.searchLine, 'i')
+      this.filteredGoods = this.goods.filter((good) => {
+        return regexp.test(good.product_name)
+      })
+    },
+    showCart() {
+      this.isVisibleCart ? this.isVisibleCart = false : this.isVisibleCart = true
     }
-
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        resolve(JSON.parse(xhr.responseText))
-      }
-    }
-
-    xhr.open('GET', url, true)
-    xhr.send()
-  })
-}
+  }
+})
 
 class GoodsItem {
-  constructor(product_id, product_name, price) {
-    this.id = product_id
+  constructor(product_name, price) {
     this.title = product_name
     this.price = price
+    // this.quantity = quantity
   }
 
-  render() {
-    return `
-      <div class="goods-item" data-id="${this.id}">
-        <h3><b>Name: </b>${this.title}</h3>
-        <p><b>Price: </b>${this.price}&#36;</p>
-        <button class="goods-item__btn" name="add-to-cart">Buy</button>
-        <button class="goods-item__btn" name="remove-from-cart">Remove</button>
-      </div>
-    `
-  }
+  // _addToCart() {
+  //   const CartInstance = new Cart()
+  //   const cartItem = new CartItem(this.product_name, this.price, this.quantity)
+  //   CartInstance.add(cartItem)
+  //   CartInstance.render()
+  // }
+  //
+  // _removeFromCart() {
+  //   const CartInstance = new Cart()
+  //   CartInstance.remove()
+  //   console.log(CartInstance.cart)
+  // }
+
 }
 
-class GoodsList {
-  constructor(cart) {
-    this.goods = []
-    this.filteredGoods = []
-    this.cart = cart
-    this.totalPrice = 0
-    this.fetchGoodsPromise()
-      .then(() => this.render())
-
-    document.querySelector('.goods-list').addEventListener('click', (event) => {
-      if (event.target.name === 'add-to-cart') {
-        const id = event.target.parentElement.dataset.id
-        const item = this.goods.find((goodsItem) => goodsItem.id_product === parseInt(id))
-
-        this.cart.add({...item, quantity: 1})
-      }
-    })
-
-    document.querySelector('.goods-list').addEventListener('click', (event) => {
-      if (event.target.name === 'remove-from-cart') {
-        const id = event.target.parentElement.dataset.id
-        this.cart.remove(parseInt(id))
-      }
-    })
-
-    document.querySelector('.search').addEventListener('input', (event) => {
-      this.filterGoods(event.target.value)
-    })
-
-  }
-
-  fetchGoodsPromise() {
-    return new Promise((resolve, reject) => {
-      makeGETRequestPromise(`${API_URL}/catalogData.json`)
-      .then(res => {
-        this.goods = res
-        this.filteredGoods = res
-        resolve()
-      })
-    })
-  }
-
-  filterGoods(value) {
-    const regexp = new RegExp(value, 'i')
-    this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name))
-    this.render()
-  }
-
-  _calcTotalPrice() {
-    this.totalPrice = 0
-    this.filteredGoods.forEach((good) => this.totalPrice += good.price)
-  }
-
-  _renderTotalPrice() {
-    this._calcTotalPrice()
-    return `
-      <div class="total-price">
-        <b>Total price:</b> ${this.totalPrice}&#36;
-      </div>
-    `
-  }
-
-  render() {
-    let listHtml = '';
-    this.filteredGoods.forEach(good => {
-      const goodItem = new GoodsItem(good.id_product, good.product_name, good.price);
-      listHtml += goodItem.render();
-    });
-    document.querySelector('.goods-list').innerHTML = listHtml + this._renderTotalPrice();
-  }
-}
-
-class Cart {
-  constructor() {
-    this.cart = []
-  }
-
-  add(product) {
-    const itemIndex = this.cart.findIndex(item => item.id_product === product.id_product)
-    if (itemIndex !== -1) this.cart[itemIndex].quantity++
-    else this.cart.push(product)
-    this.render()
-  }
-
-  remove(id) {
-    const itemIndex = this.cart.findIndex(item => item.id_product === id)
-    if (itemIndex !== -1) this.cart.splice(itemIndex, 1)
-    this.render()
-  }
-
-  total() {
-    return this.cart
-  }
-
-  render() {
-    const cartPlace = document.querySelector('.cart')
-
-    if (cartPlace) cartPlace.innerHTML = ''
-
-    this.cart.forEach(item => {
-      cartPlace.innerHTML += new CartItem(item).render()
-    })
-  }
-}
-
-class CartItem {
-  constructor(item) {
-    this.title = item.product_name
-    this.price = item.price
-    this.quantity = item.quantity
-  }
-
-  addItem() {
-  }
-
-  removeItem() {
-  }
-
-  addQuantity() {
-  }
-
-  render() {
-    return `
-      <div class="cart__item">
-        <h4><b>Name: </b>${this.title}</h4>
-        <p><b>Price: </b>${this.price}&#36;</p>
-        <p class="quantity"><b>Quantity: </b>${this.quantity}</p>
-      </div>
-    `
-  }
-}
-
-const cart = new Cart()
-const list = new GoodsList(cart)
+// class CartItem {
+//   constructor(title, price, quantity) {
+//     this.title = title
+//     this.price = price
+//     this.quantity = quantity
+//   }
+//
+//   addItem() {
+//     this.cart.addItem(this.name)
+//   }
+//
+//   removeItem() {
+//     this.cart.removeItem(this.name)
+//   }
+//
+//   addQuantity() {
+//     const CartInstance = new Cart()
+//     this.quantity += 1
+//     CartInstance.render()
+//   }
+//
+//   render() {
+//     const div = document.createElement('div')
+//     const btn = document.createElement('button')
+//
+//     btn.innerHTML = '+'
+//     btn.addEventListener('click', () => {
+//       this.addQuantity()
+//     })
+//
+//     div.innerHTML = `
+//       <h4><b>Name: </b>${this.title}</h4>
+//       <p><b>Price: </b>${this.price}</p>
+//       <p class="quantity"><b>Quantity: </b>${this.quantity}</p>
+//     `
+//     div.classList.add('cart__item')
+//     div.appendChild(btn)
+//
+//     return div
+//   }
+// }
+//
+// class Cart {
+//   cart = []
+//
+//   constructor() {
+//     if (Cart._instance) {
+//       return Cart._instance
+//     }
+//     Cart._instance = this
+//   }
+//
+//   fetchGoods() {
+//
+//   }
+//
+//   add(product) {
+//     this.cart.push(product)
+//   }
+//
+//   remove(product) {
+//     this.cart.splice(this.cart.indexOf(product, 1))
+//   }
+//
+//   total() {
+//
+//   }
+//
+//   render() {
+//     const cartPlace = document.querySelector('.cart')
+//
+//     if (cartPlace) cartPlace.innerHTML = ''
+//
+//     this.cart.forEach(item => {
+//       cartPlace.appendChild(item.render())
+//     })
+//   }
+// }
+//
+// const CartInstance = new Cart()
+//
+//
+// const btn1 = new FetchButton(list, 'Fetch (http)', list.fetchGoods, list.render)
+// const btn2 = new FetchButton(list, 'Fetch (promise)', list.fetchGoodsPromise, list.renderGoodsPromise)
+// const btn3 = new FetchButton(list, 'Fetch (return promise)', list.fetchGoodsReturnPromise, list.renderGoodsReturnPromise)
+// const btn4 = new FetchButton(list, 'Fetch (fetch)', list.fetchGoodsFetch, list.renderGoodsFetch)
+//
+// document.querySelector('.btns-wrp').appendChild(btn1.create('From http'))
+// document.querySelector('.btns-wrp').appendChild(btn2.create('From promise'))
+// document.querySelector('.btns-wrp').appendChild(btn3.create('From a returned promise'))
+// document.querySelector('.btns-wrp').appendChild(btn4.create('From fetch'))
