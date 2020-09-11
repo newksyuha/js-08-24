@@ -4,15 +4,26 @@ body {
 }
 
 header {
-    background-color: antiquewhite;
+    background-color: rgb(218, 217, 216);
     min-height: 100px;
+    padding: 20px 70px;
+    box-sizing: border-box;
+    vertical-align: middle;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h2 {
+    color: red;
+    font-size: 26px;
+    font-weight: 700;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .cart-button {
     width: 15%;
     min-height: 30px;
-    margin: 40px 100px;
-    float: right;
     border-radius: 5px;
     border: 2px solid #000;
 }
@@ -51,8 +62,9 @@ header {
     background-color: #ccc;
     margin: 30px;
     border-radius: 5px;
-    
+
 }
+
 .btn:hover {
     background-color: coral;
     border: 2px solid red;
@@ -68,3 +80,10 @@ header {
     width: 250px;
     text-align: center;
 }
+
+/*
+.sum {
+    background-color: blue;
+    min-height: 20px;
+}
+*/
