@@ -5,20 +5,30 @@
     <meta charset="UTF-8">
     <title>E-shop</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,700&display=swap&subset=cyrillic" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js" defer></script>
+<script src="app.js" defer></script>
 </head>
 
 <body>
+    <div id="app">
     <header>
-       <h2>Honda</h2>
+       <h2>E-shop</h2>
         <button class="cart-button" type="button">Корзина</button>
-        <input type="text" class="search" />
+        <input type="text" class="search" v-model="searchText" />
     </header>
     <main>
         <div class="goods-list">
+            <div class="goods-item" v-for="item in filteredGoods">
+                <h3>{{ item.product_name }}</h3>
+                <p>{{ item.price }}</p>
+                <button name="add-to-basket">Buy</button>
+            </div>
         </div>
     </main>
+    <h3>{{ total }}</h3>
+</div>
 
-    <script src="app.js"></script>
 </body>
 
 </html>

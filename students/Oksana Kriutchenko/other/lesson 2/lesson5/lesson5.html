@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-model="name" />
+        <p>Hi, my name is {{ upperCaseName  }}</p>
+        <li v-for="name in names" v-on:click="clickHandler">{{ name }}</li>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script src="lesson5.js"></script>
+</body>
+</html>

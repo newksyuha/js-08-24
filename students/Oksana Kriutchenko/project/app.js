@@ -1,28 +1,7 @@
 "use strict"
 
-/* const goods = [
-    {
-        //        title: 'Honda NC 750',
-        img: 'img/honda_NC_750_XD_2018.jpg',
-        price: 12000,
-    },
-    {
-        title: 'Honda New CB500X',
-        img: 'img/honda_CB500X.jpg',
-        //        price: 8500
-    },
-    {
-        title: 'NC 750 S-1',
-        img: 'img/NC_750_S-1.jpg',
-        price: 10500,
-    },
-    {
-        title: 'NC 750 XD 2018',
-        //        img: 'img/Honda_NC_750_XD_2018-4.jpg',
-        price: 11000,
-    },
-]; */
-const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses'; 
+
 
 function makeGETRequest(url) {
     return new Promise((resolve, reject) => {
@@ -45,6 +24,7 @@ function makeGETRequest(url) {
         xhr.send();
       });
     }
+    /*
 class GoodsItem {
     constructor({
         id_product,
@@ -183,56 +163,39 @@ class BasketItem {
   render() {
 
   }
-}
+}*/
 
-const basket = new Basket();
-const goodsList = new GoodsList(basket);
+const app = new Vue({
+  el: '#app',
+  data: {
+    goods: [],
+    searchText: '',
+  },
+  created() {
+    this.fetchGoods();
+  },
+  computed: {
+    filteredGoods() {
+      const regexp = new RegExp(this.searchText, 'i');
+      return this.goods.filter(item => regexp.test(item.product_name));
+    },
+    total() {
+      return this.goods.reduce((acc, cur) => acc + cur.price, 0);
+    },
+  },
+  methods: {
+    fetchGoods() {
+      return new Promise((resolve, reject) => {
+        makeGETRequest('/catalogData.json')
+          .then((goods) => {
+            this.goods = goods;
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
 
-/* class cartButton {
-    constructor(){
-        
-    }
-
-    clearCartButton(){
-        //метод, который производит очистку корзины
-    }
-    sumCartButton(){
-        // метод, который считает сумму товаров в корзине
-    }
-    payCartButton(){
-        //метод, который выбирает форму оплаты
-    }
-}
-class elementCartButton {
-    constructor(){
-        //price     цена
-        //quantity  количество
-        //name      наименование
-    }
-    addElementCartButton(){
-        //метод, который добавляет товар в корзину
-    }
-
-    deleteElementCartButton(){
-        //метод удаляющий элемент с корзины
-    }
-} */
-
-   
-  
-//Метод подсчета суммарной стоимости продуктов
-/* 
-    getTotalSumProduct() {
-        let totalSum = 0;
-        for (let product of this.goods) {
-            totalSum += product.price;
-        }
-        console.log(totalSum);
-        return totalSum;
-    }
-
-    renderTotalSumProduct() {
-        const blockSum =
-            document.querySelector('.btn');
-         blockSum.insertAdjacentHTML('afterend', `<br><p>Стоимость всех продуктов</p>${this.getTotalSumProduct()}`);
-    } */
+  },
+});
