@@ -21,9 +21,15 @@
                     <div class="drop-cart-details">
                         <h3>{{item.product_name}}</h3>
                         <p class="drop-cart-p"> {{item.quantity}} x {{item.price}}</p>
-                    </div>                    
+                    </div>  
+                    <div class="drop-cart-action-box">
+                        <button class="productButtonRem btn-cart-smile" @click="remProduct(item)">-</button>
+                        <button class="productButtonAdd btn-cart-smile" @click="addProduct(item)">+</button>
+                    </div>                  
                 </div>
                 <div class="drop-cart-under">
+                    <br>
+                    <hr>
                     <p class="drop-cart-total-text">Всего</p>
                     <p class="drop-cart-total"> {{cartSum}} руб. </p>
                 </div>
