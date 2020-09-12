@@ -4,17 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>eShop</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" defer></script>
     <script src="script.js" defer></script>
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,700&display=swap&subset=cyrillic" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <header>
-        <button type="button" class="cart-button">Корзина</button>
-        <input type="text" class="search" />
-    </header>
-    <main>
-        <div class="goods-list"></div>
-    </main>
+    <div id="app">
+        <header>
+            <button type="button" class="cart-button" @click="cartVisibility = !cartVisibility">Корзина ({{cartQuantity}})</button>
+            <input type="text" class="search" v-model="searchText" />
+            <div class="drop-cart" id="cart" v-if="cartVisibility">
+                <h2>Ваша Корзина&colon;</h2>
+                <p v-if="!cartQuantity" class="drop-cart-total-text">Корзина пуста</p>
+                <div v-else class="drop-cart-product" v-for="item in carts">
+                    <div class="drop-cart-details">
+                        <h3>{{item.product_name}}</h3>
+                        <p class="drop-cart-p"> {{item.quantity}} x {{item.price}}</p>
+                    </div>                    
+                </div>
+                <div class="drop-cart-under">
+                    <p class="drop-cart-total-text">Всего</p>
+                    <p class="drop-cart-total"> {{cartSum}} руб. </p>
+                </div>
+            </div>
+        </header>
+        <main>
+            <div class="goods-list">
+                <div class="goods-item" v-for="item in filteredGoods">
+                    <h3>{{ item.product_name }}</h3>
+                    <p>{{ item.price }} руб.</p>
+                    <button name="add-to-basket"  @click="addProduct(item)">Купить</button>
+                </div>
+            </div>
+        </main>
+        {{ total }}
+    </div>
 </body>
 </html>
