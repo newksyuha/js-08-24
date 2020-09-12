@@ -44,10 +44,10 @@ const app = new Vue({
     },
     cartQuantity() {  
       return this.carts.reduce((acc, cur) => acc + cur.quantity, 0);
-  },
-  cartSum() {      
+    },
+    cartSum() {      
     return this.carts.reduce((acc, cur) => acc + cur.price, 0);
-},
+    },
   },
   methods: {
     fetchGoods() {
@@ -66,24 +66,20 @@ const app = new Vue({
     
   addProduct(item) {    
        let found = this.getItem(+item.id_item);
-       if (found ) {
-                  found.quantity++;
-                  
+       if (found) {
+                  found.quantity++;                  
         } else {                  
-              this.carts.push({ ...item, quantity: 1 });
-              
+              this.carts.push({ ...item, quantity: 1 });              
         }                  
           },
       remProduct(item) {
-            let found = this.getItem(item.id_item);
-            if (found) {
+            let found = this.getItem(item.id_item);            
               found.quantity--;
               if (found.quantity === 0) {
                 let index = this.carts.indexOf(found);
                 if (index >= 0) {
-                    this.carts.splice(index, 1);
-                }  
-              }
+                    this.carts.splice(index, 1);                    
+                }               
             } 
     },
         
