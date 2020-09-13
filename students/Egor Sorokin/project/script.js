@@ -14,15 +14,118 @@ class CartElement {
     }
   }
 
-  render() {
+  /*render() {
     return `<div class="cart-item">
             <h3>${this.item.product_name}</h3>
             <p>${this.item.price}</p>
             <button class="cart-count-button" type="button">-</button><p>${this.count}</p><button class="cart-count-button" type="button">+</button>
             </div>`;
-  }
+  }*/
 }
 
+function sendRequest(url) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest;
+  
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+
+          if (xhr.status === 200) {
+            resolve(JSON.parse(xhr.responseText));
+          } else {
+            reject(xhr.responseText);
+          }
+
+        }
+    }
+
+    xhr.open('GET', `${API_URL}${url}`, true);
+  
+    xhr.send();
+  });
+}
+
+const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses'
+
+const app = new Vue ({
+  el: '#app',
+  data: {
+    goods: [],
+    filteredGoods: [],
+    searchText: '',
+    isVisibleCart: false,
+    cart: {
+      items: [],
+      price: 0,
+    }
+  },
+
+  created() {
+    this.fetchGoods();
+  },
+
+  updated() {
+    let i = 0;
+    document.querySelectorAll('.addCart').forEach(button => {
+      let a = (index) => {let add = (eventObj) => {this.addToCart(this.goods[index]);}; 
+        return add;};
+      button.addEventListener('click', a(i))
+      i++;
+    })
+  },
+
+  computed: {
+    total() {
+      return this.goods.reduce((acc,cur) => acc + cur.price, 0);
+    },
+  },
+
+  methods: {
+    fetchGoods() {
+      return new Promise ((resolve, reject) => {
+        sendRequest('/catalogData.json')
+        .then((goods) => {
+          this.goods = goods;
+          this.filteredGoods = goods;
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+      });
+    },
+
+    filterGoods() {
+      const regexp = new RegExp(this.searchText, 'i');
+      this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name));
+    },
+
+    addToCart(item) {
+
+      const newItem = new CartElement (item, 1);
+      
+      let alreadyExist = false;
+      
+      this.cart.items.forEach(singleItem => {
+        if (singleItem.item.id_product === newItem.item.id_product) {
+          alreadyExist = true;
+        }
+      })
+      if (!alreadyExist) {
+        this.cart.items.push(newItem);
+      }
+    },
+
+    toggleCartVisibility() {
+      this.isVisibleCart = !this.isVisibleCart;
+    }
+  }
+});
+
+
+
+
+/*
 class Cart {
   constructor() {
     this.items = [];
@@ -83,20 +186,6 @@ class GoodsList {
     this.goods = [];
   }
 
-  fetchGoods() {
-    makeGETRequest(`${API_URL}/catalogData.json`).then((goods) => {
-      this.goods = JSON.parse(goods);
-    }).then(() => this.render())
-  }
-
-  calculateTotal() {
-    let total = 0;
-    this.goods.forEach(good => {
-      total += good.price;
-    })
-    console.log(total);
-  }
-
   render() {
     let listHtml = '';
     this.goods.forEach(good => {
@@ -113,32 +202,4 @@ class GoodsList {
     })
   }
 }
-
-function makeGETRequest(url) {
-  return new Promise((resolve, reject) => {
-    var xhr;
-
-    if (window.XMLHttpRequest) {
-      xhr = new XMLHttpRequest();
-    } else if (window.ActiveXObject) { 
-      xhr = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        resolve(xhr.responseText);
-      } 
-    }
-
-    xhr.open('GET', url, true);
-    xhr.send();
-  });
-}
-
-const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses'
-
-const cart = new Cart();
-const list = new GoodsList();
-
-list.fetchGoods();
-
+*/

@@ -8,7 +8,21 @@ header {
     height: 60px;
 }
 
-.cart-button {
+.search {
+    padding: 10px;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    float: right;
+    margin: 10px;
+}
+
+.total {
+    margin-top: 30px;
+}
+
+.cart-button, #search-button {
     background-color: #48d648;
     padding: 10px;
     border-radius: 15px;
@@ -19,11 +33,11 @@ header {
     margin: 10px;
 }
 
-.cart-button:hover {
+.cart-button:hover, #search-button:hover {
     background-color: #59e759;
 }
 
-.cart-button:active {
+.cart-button:active, #search-button:active {
     background-color: #6af86a;
 }
 
