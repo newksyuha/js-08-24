@@ -1,7 +1,7 @@
 //const products = document.querySelector('.shop__list');
 function getSumObj(object, expression) {
-  return eval(expression.replace(/[a-z]+/gi, ((key) => object[key])));
-  }
+  return eval(expression.replace(/[a-z]+/gi, (key) => object[key]));
+}
 
 //New Method fetch  который вернет промис.
 /*
@@ -39,6 +39,8 @@ function promisifiedXHR(request, root, url) {
   });
 }
 
+/*
+
 class ProductСard {
   constructor(item = []) {
     this.id = item.id;
@@ -52,11 +54,24 @@ class ProductСard {
     return component;
   }
 }
-  
+
 class Goods {
   constructor() {
     this.getVariables();
     this.getGoods();
+    document
+      .querySelector(".menu__search")
+      .addEventListener("input", (event) => {
+        this.getFilter(event.target.value);
+      });
+  }
+
+  getFilter(e) {
+    const reg = new RegExp(e, "i");
+    console.log(reg);
+    this.filter = this.goods.filter((item) => reg.test(item.name));
+    console.log(this.filter);
+    this.render();
   }
 
   getVariables() {
@@ -64,21 +79,26 @@ class Goods {
     this.maxNumPrice = document.querySelector(".shop__max-price");
     this.sum = 0;
     this.goods = [];
+    this.filter = [];
   }
   getGoods() {
     //Вызываем нашу функцию, которая вернет промис и отдаст запрос с сервера.
     promisifiedXHR("GET", root, "/goods.json").then((goods) => {
       //Полученные данные храним в  this
-      this.goods = goods; 
-      this.sum = this.goods.reduce((all, cur) => all + getSumObj(cur, 'count * price'), 0)
+      this.goods = goods;
+      this.filter = goods;
+      this.sum = this.goods.reduce(
+        (all, cur) => all + getSumObj(cur, "count * price"),
+        0
+      );
       this.maxNumPrice.innerHTML = `Общая цена товаров на сумму: ${this.sum} Руб`;
-      this.render(); 
-      new Basket()
+      this.render();
+      new Basket();
     });
   }
 
   render() {
-    let domTree = this.goods
+    let domTree = this.filter
       .map((item) => {
         const card = new ProductСard(item);
         return card.getComponent([
@@ -97,30 +117,35 @@ class Goods {
   }
 }
 const productСard = new Goods();
-  
-class Basket{ 
-    constructor(){  
-        this.goods = productСard.goods 
-        this.products = [] //Корзина пуста  
-        this.addProduct(2);    
-        this.addProduct(1);      
-        this.removeProduct(1);
-    } 
- 
-    //Добавляем продукт в корзину.
-    addProduct(id){  
-            this.products.push(this.goods.find((element) => element.id === id));    
-            this.sum = this.goods.reduce((all, cur) => all + getSumObj(cur, 'price'), 0) 
-            console.log('Сумма товаров: ' + this.sum);
+class Basket {
+  constructor() {
+    this.goods = productСard.goods;
+    this.products = []; //Корзина пуста
+    this.addProduct(2);
+    this.addProduct(1);
+    this.removeProduct(1);
+  }
 
-        } 
+  //Добавляем продукт в корзину.
+  addProduct(id) {
+    this.products.push(this.goods.find((element) => element.id === id));
+    this.sum = this.goods.reduce(
+      (all, cur) => all + getSumObj(cur, "price"),
+      0
+    );
+    console.log("Сумма товаров: " + this.sum);
+  }
 
-    //Удаляем продукт из корзины.
-    removeProduct(id){ 
-        this.products.splice(this.products.findIndex((element) => element.id === id));
-    }  
+  //Удаляем продукт из корзины.
+  removeProduct(id) {
+    this.products.splice(
+      this.products.findIndex((element) => element.id === id)
+    );
+  }
 } 
-; 
+
+*/
+
 class Form {
   constructor() {
     this.submitForm = document.querySelector(".contact__form");
@@ -138,8 +163,8 @@ class Form {
     this.inputs.forEach((input) => {
       const paragraph = input.parentElement.children[0];
       if (input.value && input.value.length > 0) this.checkRegValidator(e);
-      else { 
-        paragraph.innerHTML = `Поле не может быть пустым`
+      else {
+        paragraph.innerHTML = `Поле не может быть пустым`;
         paragraph.classList.remove("invalid-hidden");
         e.preventDefault();
       }
@@ -152,31 +177,31 @@ class Form {
       paragraph.classList.add("invalid-hidden");
       switch (i) {
         case 0:
-          if (this.rules.userName.test(input.value)) console.log('Имя верное!');
-          else { 
+          if (this.rules.userName.test(input.value)) console.log("Имя верное!");
+          else {
             paragraph.innerHTML = `Недопустимое имя`;
             paragraph.classList.remove("invalid-hidden");
             e.preventDefault();
           }
           break;
         case 1:
-            if (this.rules.phone.test(input.value)) console.log(true);
-            else { 
-              paragraph.innerHTML = `Телефон должен соответствовать маски`;
-              paragraph.classList.remove("invalid-hidden");
-              e.preventDefault();
-            }
+          if (this.rules.phone.test(input.value)) console.log(true);
+          else {
+            paragraph.innerHTML = `Телефон должен соответствовать маски`;
+            paragraph.classList.remove("invalid-hidden");
+            e.preventDefault();
+          }
           break;
         case 2:
-            if (this.rules.email.test(input.value)) console.log(true);
-            else { 
-              paragraph.innerHTML = `Маил должен быть настоящим`;
-              paragraph.classList.remove("invalid-hidden");
-              e.preventDefault();
-            }
+          if (this.rules.email.test(input.value)) console.log(true);
+          else {
+            paragraph.innerHTML = `Маил должен быть настоящим`;
+            paragraph.classList.remove("invalid-hidden");
+            e.preventDefault();
+          }
           break;
         default:
-            Console.warn('Произошла ошибка отправки формы.');
+          Console.warn("Произошла ошибка отправки формы.");
       }
     });
   }
@@ -186,8 +211,54 @@ const form = new Form();
 form.submitForm.addEventListener("submit", (event) => {
   form.validator(event);
 });
-;
- 
+
 //Временная...
 //const text = `'В этом тексте будет замена только, если 'кавычка' находится в начале или в конце.'`;
 //text.replace(/(^'|'$)/gm, '"');
+
+const bodyApp = new Vue({
+  el: "#app",
+  data: {
+    product: {
+      goods: [],
+      serchProduct: "", 
+      notFound: { 
+        title: 'Нам жаль', 
+        text: 'Товар не найден',
+      },
+    }, 
+
+    basket: { 
+      isVisibleCart: true,
+    },
+  },
+
+  created() {
+    this.getGoods();
+  },
+
+  computed: {
+    getFilter() {
+      const self = this.product;
+      const reg = new RegExp(self.serchProduct, "i"); 
+      console.log(self.goods);
+      return self.goods.filter((item) => reg.test(item.name)); 
+    },
+  },
+
+  methods: {
+    getGoods() {
+      //Вызываем нашу функцию, которая вернет промис и отдаст запрос с сервера.
+      promisifiedXHR("GET", root, "/goods.json").then((goods) => {
+        //Полученные данные храним в  this
+        const self = this.product;
+        self.goods = goods;
+      });
+    },
+
+    sum(express) {
+      const self = this.product;
+      return self.goods.reduce((all, cur) => all + getSumObj(cur, express), 0);
+    },
+  },
+});
