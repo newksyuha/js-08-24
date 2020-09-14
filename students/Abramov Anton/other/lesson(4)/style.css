@@ -1,0 +1,11 @@
+input {
+    width: 200px;
+    display: flex;
+}
+
+button {
+    display: flex;
+    text-align: center;
+    min-width: 100px;
+    padding: 10px;
+}

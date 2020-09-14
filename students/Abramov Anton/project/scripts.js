@@ -26,28 +26,27 @@ class goodsList {
         </div>
     </div>`);
     }
-
-    listSum(goods) {
-        this.sum = 0;
-        goods.forEach(elem => {
-            this.sum += elem.price;
-        });
-        return this.sum;
-    }
 }
 
 let goodsLoad = new goodsList;
 goodsLoad.renderGoodsList(goodsLoad.goods);
-alert("Сумма товаров - " + goodsLoad.listSum(goodsLoad.goods));
 
 // здесь классы корзины и товара
 class basket {
+    constructor() {
+        this.quantitySum = 0;
+        this.priceSum = 0;
+    }
     sumQuantityInBasket() {} //Считает общее Кол-во товаров в корзине
     sumPriceInBasket() {} //Сумма товаров в корзине
-    removeItemInBasketAll() {} // Удаляет все из корзины
+    removeItemInBasketAll() { // Удаляет все из корзины
+        this.quantitySum = 0;
+        this.priceSum = 0;
+    }
     goToBasket() {} // Переход в корзину из Шапки сайта
     closeBasket() {} // Закрыть корзину
 }
+
 class elemBasket {
     clickOnPlus() {} // Добавляет кол-во позиций товара в корзине +1
     clickOnMinus() {} //тоже самое только с минусом -1
