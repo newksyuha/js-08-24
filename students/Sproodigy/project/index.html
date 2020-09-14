@@ -7,38 +7,37 @@
     <title>E-shop</title>
   </head>
   <body>
-      <div id="app">
-        <header class="header">
-          <div class="search">
-            <input
-              class="search__text"
-              type="text"
-              v-model="searchLine"
-            >
-            <button class="search__btn" @click="filterGoods">Search</button>
-          </div>
-          <button class="header-btn" @click="showCart">Корзина</button>
-          <div v-show="isVisibleCart" class="cart">
-            <div class="cart__item" v-for="item in cart">
-              <h4><b>Name: </b>{{ item.product_name }}</h4>
-              <p><b>Price: </b>{{ item.price }}&#36;</p>
-              <p><b>Quantity: </b>{{ item.quantity }}</p>
-            </div>
-          </div>
-        </header>
-        <main class="main">
-          <div v-if="checkGoodsListData" class="goods-list">
-            <div class="goods-item" v-for="item in filteredGoods">
-              <h3><b>Name: </b>{{ item.product_name }}</h3>
-              <p><b>Price: </b>{{ item.price }}&#36;</p>
-              <button class="header-btn header-btn_small">Buy</button>
-              <button class="header-btn header-btn_small">Remove</button>
-            </div>
-          </div>
-          <div v-else class="goods-list goods-list_empty">{{ emptyGoodsListMessage }}</div>
-          <div class="total-price">{{ totalPrice }}&#36;</div>
-        </main>
-      </div>
+    <div id="app">
+      <header class="header">
+        <div class="search">
+          <search-text v-model="searchLine"></search-text>
+          <search-btn @filter-goods="filterGoods"></search-btn>
+        </div>
+        <header-btn @show-cart="showCart"></header-btn>
+        <div v-show="isVisibleCart" class="cart">
+          <cart-item
+            v-for="item in cart"
+            :key="item.id_product"
+            :item="item"
+          ></cart-item>
+          <empty-cart v-if="!checkCartLength"></empty-cart>
+        </div>
+      </header>
+      <main class="main">
+        <div v-if="checkGoodsListLength" class="goods-list">
+          <goods-item
+            v-for="item in filteredGoods"
+            :key="item.id_product"
+            :id="item.id_product"
+            :item="item"
+            @add-to-cart="addToCart"
+            @remove-from-cart="removeFromCart"
+          ></goods-item>
+        </div>
+        <empty-goods-list v-else></empty-goods-list>
+        <total-price :total-price="totalPrice"></total-price>
+      </main>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="script.js"></script>
   </body>

@@ -1,3 +1,94 @@
+Vue.component('search-text', {
+  data() {
+    return {}
+  },
+  props: ['searchLine', 'value'],
+  template: `
+    <input
+      class="search__text"
+      type="text"
+      v-bind="$attrs"
+      :value="value"
+      @input="$emit('input', $event.target.value)"
+    >
+  `
+})
+
+Vue.component('search-btn', {
+  data() {
+    return {
+      btnText: 'Search',
+    }
+  },
+  template: `<button class="search__btn" @click="$emit('filter-goods')">{{ btnText }}</button>`
+})
+
+Vue.component('header-btn', {
+  data() {
+    return {
+      btnText: 'Cart',
+    }
+  },
+  template: `<button class="header-btn" @click="$emit('show-cart')">{{ btnText }}</button>`
+})
+
+Vue.component('goods-item', {
+  data() {
+    return {}
+  },
+  props: ['item'],
+  template: `
+    <div class="goods-item">
+      <h4><b>Name: </b>{{ item.product_name }}</h4>
+      <p><b>Price: </b>{{ item.price }}&#36;</p>
+      <button class="header-btn header-btn_small" @click="$emit('add-to-cart', $event)">Buy</button>
+      <button class="header-btn header-btn_small" @click="$emit('remove-from-cart', $event)">Remove</button>
+    </div>
+  `
+})
+
+Vue.component('empty-goods-list', {
+  data() {
+    return {
+      emptyGoodsListMessage: 'No data!',
+    }
+  },
+  template: `<div class="goods-list goods-list_empty">{{ emptyGoodsListMessage }}</div>`
+})
+
+Vue.component('cart-item', {
+  data() {
+    return {}
+  },
+  props: ['item'],
+  template: `
+    <div class="cart__item">
+      <h4><b>Name: </b>{{ item.product_name }}</h4>
+      <p><b>Price: </b>{{ item.price }}&#36;</p>
+      <p><b>Quantity: </b>{{ item.quantity }}</p>
+    </div>
+  `
+})
+
+Vue.component('empty-cart', {
+  data() {
+    return {
+      emptyCartMessage: 'Cart is empty!',
+    }
+  },
+  template: `<div class="cart__item cart_empty">{{ emptyCartMessage }}</div>`
+})
+
+Vue.component('total-price', {
+  data() {
+    return {
+      prefix: 'Total price: '
+    }
+  },
+  props: ['totalPrice'],
+  template: `<div class="total-price">{{ prefix }}{{ totalPrice }}&#36;</div>`
+})
+
 const app = new Vue({
   el: '#app',
   data: {
@@ -5,14 +96,9 @@ const app = new Vue({
     API_URL_CATALOG: 'catalogData.json',
     goods: [],
     filteredGoods: [],
+    cart: [],
     searchLine: '',
-    cart: [
-      {product_name: 'Some', price: '1000', quantity: 1},
-      {product_name: 'Another', price: '2000', quantity: 4},
-    ],
     isVisibleCart: false,
-    emptyCartMessage: 'Cart is empty!',
-    emptyGoodsListMessage: 'No data!',
   },
   created() {
     this.fetchGoods()
@@ -21,8 +107,11 @@ const app = new Vue({
     totalPrice() {
       return this.goods.reduce((acc, good) => acc + good.price, 0)
     },
-    checkGoodsListData() {
+    checkGoodsListLength() {
       return this.filteredGoods.length
+    },
+    checkCartLength() {
+      return this.cart.length
     },
   },
   methods: {
@@ -38,122 +127,25 @@ const app = new Vue({
         return regexp.test(good.product_name)
       })
     },
+    addToCart(event) {
+      const matchId = parseInt(event.target.parentElement.id)
+      const matchGood = this.goods.find(good => good.id_product === matchId)
+      const itemIndex = this.cart.findIndex((good) => good.id_product === matchId);
+
+      if (itemIndex !== -1) {
+        this.cart[itemIndex].quantity++;
+      } else {
+        this.cart.push({ ...matchGood, quantity: 1 });
+      }
+    },
+    removeFromCart(event) {
+      const matchId = parseInt(event.target.parentElement.id)
+      const itemIndex = this.cart.findIndex((good) => good.id_product === matchId);
+      if (itemIndex !== -1) this.cart.splice(itemIndex, 1)
+
+    },
     showCart() {
-      this.isVisibleCart ? this.isVisibleCart = false : this.isVisibleCart = true
+      this.isVisibleCart = !this.isVisibleCart
     }
   }
 })
-
-class GoodsItem {
-  constructor(product_name, price) {
-    this.title = product_name
-    this.price = price
-    // this.quantity = quantity
-  }
-
-  // _addToCart() {
-  //   const CartInstance = new Cart()
-  //   const cartItem = new CartItem(this.product_name, this.price, this.quantity)
-  //   CartInstance.add(cartItem)
-  //   CartInstance.render()
-  // }
-  //
-  // _removeFromCart() {
-  //   const CartInstance = new Cart()
-  //   CartInstance.remove()
-  //   console.log(CartInstance.cart)
-  // }
-
-}
-
-// class CartItem {
-//   constructor(title, price, quantity) {
-//     this.title = title
-//     this.price = price
-//     this.quantity = quantity
-//   }
-//
-//   addItem() {
-//     this.cart.addItem(this.name)
-//   }
-//
-//   removeItem() {
-//     this.cart.removeItem(this.name)
-//   }
-//
-//   addQuantity() {
-//     const CartInstance = new Cart()
-//     this.quantity += 1
-//     CartInstance.render()
-//   }
-//
-//   render() {
-//     const div = document.createElement('div')
-//     const btn = document.createElement('button')
-//
-//     btn.innerHTML = '+'
-//     btn.addEventListener('click', () => {
-//       this.addQuantity()
-//     })
-//
-//     div.innerHTML = `
-//       <h4><b>Name: </b>${this.title}</h4>
-//       <p><b>Price: </b>${this.price}</p>
-//       <p class="quantity"><b>Quantity: </b>${this.quantity}</p>
-//     `
-//     div.classList.add('cart__item')
-//     div.appendChild(btn)
-//
-//     return div
-//   }
-// }
-//
-// class Cart {
-//   cart = []
-//
-//   constructor() {
-//     if (Cart._instance) {
-//       return Cart._instance
-//     }
-//     Cart._instance = this
-//   }
-//
-//   fetchGoods() {
-//
-//   }
-//
-//   add(product) {
-//     this.cart.push(product)
-//   }
-//
-//   remove(product) {
-//     this.cart.splice(this.cart.indexOf(product, 1))
-//   }
-//
-//   total() {
-//
-//   }
-//
-//   render() {
-//     const cartPlace = document.querySelector('.cart')
-//
-//     if (cartPlace) cartPlace.innerHTML = ''
-//
-//     this.cart.forEach(item => {
-//       cartPlace.appendChild(item.render())
-//     })
-//   }
-// }
-//
-// const CartInstance = new Cart()
-//
-//
-// const btn1 = new FetchButton(list, 'Fetch (http)', list.fetchGoods, list.render)
-// const btn2 = new FetchButton(list, 'Fetch (promise)', list.fetchGoodsPromise, list.renderGoodsPromise)
-// const btn3 = new FetchButton(list, 'Fetch (return promise)', list.fetchGoodsReturnPromise, list.renderGoodsReturnPromise)
-// const btn4 = new FetchButton(list, 'Fetch (fetch)', list.fetchGoodsFetch, list.renderGoodsFetch)
-//
-// document.querySelector('.btns-wrp').appendChild(btn1.create('From http'))
-// document.querySelector('.btns-wrp').appendChild(btn2.create('From promise'))
-// document.querySelector('.btns-wrp').appendChild(btn3.create('From a returned promise'))
-// document.querySelector('.btns-wrp').appendChild(btn4.create('From fetch'))
