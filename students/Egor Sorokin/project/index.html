@@ -3,17 +3,36 @@
 <head>
     <title>eShop</title>
     <link rel="stylesheet" href="style.css">
-    <script async src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script defer src="script.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <button class="cart-button" type="button">Корзина</button>
-        </header>
-        <main class="justify-content-between">
-            <div class="goods-list"></div>
-        </main>
-        <div class="cart-list"></div>
-    </div> 
+    <div id="app">
+        <div class="container">
+            <header>
+                <button class="cart-button" type="button" @click="toggleCartVisibility">Корзина</button>
+                <button id="search-button" type="button" @click="filterGoods">Искать</button>
+                <input type="text" class="search" v-model="searchText"> 
+            </header>
+            <main class="justify-content-between">
+                <div class="goods-list">
+                    <p v-if="filteredGoods.length == 0">Нет данных</p>
+                    <div class="goods-item" v-for="item in filteredGoods">
+                        <h3>{{item.product_name}}</h3>
+                        <p>{{item.price}}</p>
+                        <button class="addCart" type="button">To Cart</button>
+                    </div>
+                </div>
+            </main>
+            <div class="total">{{total}}</div>
+            <div class="cart-list" v-if="isVisibleCart">
+                <div class="cart-item" v-for="cartItem in cart.items">
+                    <h3>{{cartItem.item.product_name}}</h3>
+                    <p>{{cartItem.item.price}}</p>
+                    <button class="cart-count-button" type="button">-</button><p>{{cartItem.count}}</p><button class="cart-count-button" type="button">+</button>
+                </div>
+            </div>
+        </div> 
+    </div>
 </body>
 </html>
