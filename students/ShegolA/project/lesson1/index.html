@@ -4,16 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>eShop</title>
-  <link rel="stylesheet" href="../lesson1/style.css">
+  <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="bootstrap.css">
+
 </head>
 <body>
+<div id="app">
   <header>
-    <button class="cart-button" type="button">Корзина</button>
+        <div class="search d-flex flex-row justify-content-end">
+        <input type="text" placeholder="Поиск по сайту" class="form-control" v-model="searchLine" @keyup.enter="filterGoods">
+        <button class="btn btn-light" @click="filterGoods">Поиск</button>
+      <button class="btn btn-light" @click="showCart">Корзина</button>
+    </div>
   </header>
-  <main>
-    <div class="goods-list"></div>
-    <div class="goods-basket"></div>
+  <main class="main">
+    <div v-if="checkGoodsListData" class="goods-list">
+      <div class="goods-item shadow p-3 mb-5 bg-white rounded" v-for="item in filteredGoods">
+        <p>{{ item.product_name }}</p>
+        <p>{{ item.price }} руб.</p>
+        <button class="btn btn-light">Купить</button>
+        <button class="btn btn-light">Удалить</button>
+      </div>
+    </div>
+    <div v-else>{{ emptyGoodsListMessage }}</div>
+    <div v-show="isVisibleCart" class="cart">
+      <h3>Вы выбрали</h3>
+      <div v-for="item in cart" class="cart_item shadow p-3 mb-5 bg-white rounded">
+        <p>{{ item.product_name }}</p>
+        <p>{{ item.price }} руб.</p>
+        <p>{{ item.quantity }} шт.</p>
+        <button class="btn btn-light">Удалить</button>
+      </div>
+    </div>
+
   </main>
-  <script src="../lesson1/script.js"></script>
+</div>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
