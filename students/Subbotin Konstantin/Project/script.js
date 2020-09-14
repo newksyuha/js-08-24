@@ -18,17 +18,57 @@
   
   renderGoodsList(goods); */
 
+const app = new Vue({
+    el: '#app',
+    data: {
+        goods: [],
+        filteredGoods: [],
+        searchLine: ''
+    },
+    methods: {
+        makeGETRequest(url, callback) {
+            const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
-function makeGETRequest(url, callback) {
+            var xhr;
+
+            if (window.XMLHttpRequest) {
+                xhr = new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                xhr = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    callback(xhr.responseText);
+                }
+            }
+
+            xhr.open('GET', url, true);
+            xhr.send();
+        },
+        mounted() {
+            this.makeGETRequest(`${API_URL}/catalogData.json`, (goods) => {
+                this.goods = goods;
+                this.filteredGoods = goods;
+            });
+        },
+        filterGoods() {
+            const regexp = new RegExp(this.searchText, 'i');
+            this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name));
+          },
+    }
+});
+
+/* function makeGETRequest(url, callback) {
     return new Promise((resolve, reject) => {
-    
+
         let xhr = window.XMLHttpRequest ? new window.XMLHttpRequest() : new window.ActiveXObject;
         xhr.open("GET", url, true);
         xhr.onload = () => resolve(callback(xhr.responseText));
         xhr.onerror = () => reject(xhr.statusText);
         xhr.send();
     });
-}
+} */
 
 
 class GoodsItem {
@@ -41,7 +81,7 @@ class GoodsItem {
     }
 }
 
-const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+/* const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses'; */
 class GoodsList {
     constructor() {
         this.goods = [];
@@ -52,7 +92,7 @@ class GoodsList {
         this.filteredGoods = this.goods.filter(good => regexp.test(good.product_name));
         this.render();
     }
-    
+
     fetchGoods(cb) {
         makeGETRequest(`${API_URL}/catalogData.json`, (goods) => {
             this.goods = JSON.parse(goods);
@@ -63,11 +103,11 @@ class GoodsList {
     render() {
         let listHtml = '';
         this.filteredGoods.forEach(good => {
-          const goodItem = new GoodsItem(good.product_name, good.price);
-          listHtml += goodItem.render();
+            const goodItem = new GoodsItem(good.product_name, good.price);
+            listHtml += goodItem.render();
         });
         document.querySelector('.goods-list').innerHTML = listHtml;
-      }
+    }
 
     //метод, определяющий суммарную стоимость всех товаров.
     getSumPriceGoods() {
@@ -82,7 +122,7 @@ class GoodsList {
 searchButton.addEventListener('click', (e) => {
     const value = searchInput.value;
     list.filterGoods(value);
-  });
+});
 
 const list = new GoodsList();
 list.fetchGoods(() => {
