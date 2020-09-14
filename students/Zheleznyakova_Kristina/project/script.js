@@ -1,122 +1,150 @@
+const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+
+function makeGETRequest(url) 
+{
+    return new Promise((resolve, reject) => 
+    {
+        const xhr = new XMLHttpRequest;
+
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) 
+            {
+                if (xhr.status === 200) resolve(JSON.parse(xhr.responseText));
+                else reject(xhr.responseText);
+            }
+        }
+
+        xhr.open('GET', `${API_URL}${url}`, true);
+        xhr.send();   
+    })
+}
+
+
 class GoodsItem 
 {
-    constructor({ product_name, price }) 
+    constructor({ id_product, product_name, price }) 
     {
+        this.id           = id_product
         this.product_name = product_name;
-        this.price = price;
+        this.price        = price;
     }
 
     render() 
     {
         return `
-            <div class="goods-item">
+            <div class="goods-item" data-id='${this.id}'>
                 <h3>${this.product_name}</h3>
                 <p>${this.price}</p>
-                <button class='btn_inBasket'>В корзину</button>
+                <button class='btn_toBasket' name='btn_toBasket'>Buy</button>
             </div>
         `;
     }
 }
 
 
-const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
-
-function makeGETRequest(url) 
-{
-    return new Promise((resolve) => 
-    {
-        var xhr;
-
-        if (window.XMLHttpRequest) 
-        {
-            xhr = new XMLHttpRequest();
-        } else if (window.ActiveXObject) 
-        {
-            xhr = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-
-        xhr.open('GET', url, true);
-        xhr.send();
-        
-        xhr.onreadystatechange = () => {if (xhr.readyState === 4) resolve(xhr.responseText)};
-    })
-}
-
-
 class GoodsList 
 {
-    constructor() 
+    constructor(basket) 
     {
-        this.goods = [];
+        this.basket        = basket;
+        this.goods         = [];
+        this.filteredGoods = [];
+
+        this.fetchGoods()
+            .then(() => {
+                this.render();
+            })
+            .catch((err) => {
+                console.log('[ERROR]', err);
+            });
+        
+        document.querySelector('.goods-list').addEventListener('click', (event) => {
+            if (event.target.name === 'btn_toBasket') 
+            {
+                const id   = event.target.parentElement.dataset.id;
+                const item = this.goods.find((goodItem) => goodItem.id_product === parseInt(id));
+
+                this.basket.add_item(item);
+            }
+        });
+
+        document.querySelector('.search').addEventListener('input', (event) => {
+            this.filterGoods(event.target.value);
+        })
     }
 
     fetchGoods() 
     {
         return new Promise((resolve, reject) => 
         {
-            let x = makeGETRequest(`${API_URL}/catalogData.json`);
+            makeGETRequest(`/catalogData.json`)
+            .then((goods) => 
+            {
+                this.goods         = goods;
+                this.filteredGoods = goods;
 
-            try        { resolve(x); }
-            catch(err) { reject(err); }
-        })
+                resolve();
+            })
+            .catch((err) => reject(err))
+        }
+        );
+    }     
 
+    total() 
+    {
+        return this.goods.reduce((acc, cur) => acc + cur.price, 0);
     }
-        
+
+    filterGoods(value)
+    {
+        const regexp       = new RegExp(value, 'i');
+        this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name));
+    
+        this.render();
+    }
+
     render() 
     {
-        let listHtml = '';
+        const goodsList = this.filteredGoods.map(item => {
+            const goodsItem = new GoodsItem(item);
 
-        this.goods.forEach(good => 
-        {
-            const goodItem = new GoodsItem(good);
-            listHtml       += goodItem.render();
+            return goodsItem.render();
         });
 
-        document.querySelector('.goods-list').innerHTML = listHtml;
-    }        
-
-    to_sum_prices() 
-    {
-        let sum_prices = this.goods.reduce((a, b) => a + b.price, 0);
-
-        return sum_prices;
-    }
-
-    /**
-     * При нажатии кнопки 'В корзину' добавляется в список корзины 1 позиция товара, выводится список в консоль.
-     */
-    add_to_basket() 
-    {
-        const btn = document.getElementsByClassName('btn_inBasket');
-
-        for (let i = 0; i < btn.length; i++) {
-            btn[i].addEventListener('click', () => {
-                console.log("Clicked index: " + i); 
-
-                basket_.add(this.goods[i]);
-                basket_.get_list_basket();                   
-            });
-        }
-    }
+        document.querySelector('.goods-list').innerHTML = goodsList.join('');
+    }   
 }
 
 
-class Elem_basket 
+class BasketItem
 {
-    constructor({ id_product, product_name, price, count }) 
+    constructor(item, basket) 
     {
-        this.id    = id_product;
-        this.name  = product_name;
-        this.price = price;
-        this.count = count;
+        this.item   = item;
+        this.basket = basket;
+    }
+
+    addItem()
+    {
+        this.basket.addItem(this.item.id);
+    }
+
+    removeItem()
+    {
+        this.basket.removeItem(this.item.id);
+    }
+
+    add() 
+    {
+        this.item.quantity += 1;
     }
 
     /**
      * Создает разметку одной строки позиции товара в корзине.
-     */
+    */
     render() 
     {
-        return `
+        /*return `
             <div class="basket-item">
                 <div>${this.id}</div>
                 <div>${this.name}</div>
@@ -124,7 +152,7 @@ class Elem_basket
                 <div>${this.count}</div>
                 <button>Delete</button>
             </div>
-        `;
+        `;*/
     }
 }
 
@@ -133,53 +161,42 @@ class Basket
 {
     constructor() 
     {
-        this.list_basket = [];
+        this.goods = [];
+    }
+
+    fetchGoods() 
+    {
+
     }
 
     /**
      * Добавляет позицию товара в список корзины при нажатии соответствующей кнопки в карточке товара.
      * Если позиция товара существует в списке => увеличивается count.
      */
-    add({ id_product, product_name, price })
+    add_item(item)
     {
-        let finded = false;
-
-        for (let i = 0; i < this.list_basket.length; i++) {
-            if (this.list_basket[i].id == id_product) {                    
-                this.list_basket[i].count += 1;
-                finded                     = true;
-            } 
-        }
-
-        if (!finded) {
-            this.list_basket.push({ id: id_product, name: product_name, price: price, count: 1 }); 
-        }        
+        const itemIndex = this.goods.findIndex((goodsItem) => goodsItem.id_product === item.id_product);
+        
+        if (itemIndex !== -1) this.goods[itemIndex].quantity++;
+        else this.goods.push({ ...item, quantity: 1 });
+        
+        console.log(this.goods);  
     }
     
     /**
      * Удаляет позицию товара из корзины при нажатии соответствующей кнопки.
      * Если добавлено несколько позиций, то сначала уменьшается count товара.
      */
-    remove_item({ id_product }) 
+    remove_item(id) 
     {    
-        this.list_basket.forEach((elem) => {
-            if (elem.id === id_product && elem.count > 1) {
-                elem.count -=1;
-
-                console.log('-1 count');
-            } else if (elem.id === id_product && elem.count == 1) {
-                this.list_basket.splice(elem, 1);
-
-                console.log('delete');
-            }
-        })
+        const itemIndex = this.goods.findIndex((goodsItem) => goodsItem.id_product === id);
         
-        return this.list_basket;
+        if (itemIndex !== -1) this.goods.splice(itemIndex, 1);
     }
 
-    get_list_basket()
+    get_basket_items()
     {
-        return console.log(this.list_basket);
+        return console.log(this.goods);
     }
 
     /**
@@ -229,14 +246,6 @@ class Basket
     }
 
     /**
-     * Увеличение количества позиций товара в корзине.
-     */
-    increase_quantity() 
-    {
-
-    }
-
-    /**
      * Удаляет корзину, если она пустая.
      */
     remove_basket() 
@@ -247,21 +256,12 @@ class Basket
     /**
      * Суммирует общую стоимость позиций в корзине.
      */
-    sum_prices() 
+    total() 
     {
 
     }
 }
 
 
-const list    = new GoodsList();
-const basket_ = new Basket();
-
-list.fetchGoods().then( 
-    resolve => {
-        list.goods = JSON.parse(resolve);
-    
-        list.render();
-        list.add_to_basket();
-    }
-)
+let basket = new Basket();
+let list   = new GoodsList(basket);
