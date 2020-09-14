@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eShop</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" defer></script>
+    <script src="script/script.js" defer></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="container">
+            <header class="padding-site btn-group" >
+                <a href="#" class="header-logo">
+                    <img src="img/logo-shop.png" alt="logo-shop" width="100" height="100"></a>
+                <nav class="header-menu">
+                    <ul class="nav-menu">
+                        <li>
+                            <a href="#" class="menu-link">Главная</a>
+                        </li>
+                        <li>
+                            <a href="#" class="menu-link">Товары</a>
+                        </li>
+                        <li>
+                            <a href="#" class="menu-link">Контакты</a>
+                        </li>
+                    </ul>
+                </nav>
+                <input type="text" class="search" v-model="searchText"/>
+                <button type="button" class="cart-btn" v-on:click.prevent="showBasket">Корзина</button>
+                <div id="myDropdown" class="dropdown-menu dropdown-menu-right basketPanel">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Имя</th>
+                                <th scope="col">Цена</th>
+                                <th scope="col">Количество</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2" scope="row">Итого:</th>
+                                <td colspan="3">
+                                    <span class="total">0</span>
+                                    <i class="fas fa-ruble-sign"></i>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+            </header>
+            <main>
+                <div class="goods-list">
+                    <div class="goods-item" v-for="item in filteredGoods">
+                        <h3>{{ item.product_name }}</h3>
+                        <p>{{ item.price }}</p>
+                        <button name="add-to-basket">В корзину</button>
+                    </div>
+                    <div v-if="!filteredGoods.length">Нет данных
+                        
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>
