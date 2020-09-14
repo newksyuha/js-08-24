@@ -1,0 +1,6 @@
+.valid {
+    border-color: #36cc36;
+}
+.invalid {
+    border-color:red;
+}
