@@ -10,7 +10,7 @@ header {
     box-sizing: border-box;
     vertical-align: middle;
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-end;
     align-items: center;
 }
 
@@ -23,8 +23,8 @@ h2 {
 
 .cart-button {
     width: 15%;
-    min-height: 30px;
-    border-radius: 5px;
+    min-height: 50px;
+    border-radius: 10px;
     border: 2px solid #000;
 }
 
@@ -51,5 +51,39 @@ button:active {
     background-color: #ccc;
 }
 button {
-background-color: rgb(216, 149, 149);
+background-color: rgb(248, 124, 124);
+}
+.search {
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    border: 1px solid #000;
+    float: right;
+    margin: 10px;
+}
+.search-button{
+    width: 10%;
+    min-height: 30px;
+    border-radius: 10px;
+    border: 2px solid #000;
+    background-color: rgb(250, 228, 228);
+}
+.addToBasket {
+    border-radius: 10px;
+    margin-top: 30px;
+}
+.total {
+    text-align: center;
+}
+.basketPanel {
+    width: 30%;
+    min-height: 100px;
+    background-color: #fff;
+    position: absolute;
+    top: 75px;
+    right: 10px;
+}
+.table-hover{
+    border: #000;
+
 }
