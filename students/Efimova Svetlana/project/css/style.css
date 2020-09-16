@@ -14,8 +14,8 @@ header {
 
 .goods-search {
     width: 120px;
-    height: 30px;
-    margin: 10px;
+    height: 25px;
+    margin: 10px 0 10px 0;
 }
 
 .search-button,
