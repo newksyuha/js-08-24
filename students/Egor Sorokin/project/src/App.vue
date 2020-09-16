@@ -1,17 +1,19 @@
 <template>
   <div id="app">
       <div class="container">
-          <HeaderComponent>
-              <SearchComponent v-on:filter-goods="filterGoods($event)" /> 
-              <CartComponent :cart="cart" />
-          </HeaderComponent>
-          <MainComponent :filteredGoods="filteredGoods" v-on:item-to-add="addToCart($event)" />
-          <div class="total">{{total}}</div>
+        <FetchErrorComponent :fetchError="fetchError" />
+        <HeaderComponent>
+            <SearchComponent v-on:filter-goods="filterGoods($event)" /> 
+            <CartComponent :cart="cart" />
+        </HeaderComponent>
+        <MainComponent :filteredGoods="filteredGoods" v-on:item-to-add="addToCart($event)" />
+        <div class="total">{{total}}</div>
       </div> 
   </div>
 </template>
 
 <script>
+import FetchErrorComponent from './components/FetchError.vue';
 import HeaderComponent from './components/Header.vue';
 import MainComponent from './components/Main.vue';
 import CartComponent from './components/CartComponent.vue';
@@ -24,11 +26,13 @@ export default {
     CartComponent,
     HeaderComponent,
     MainComponent,
+    FetchErrorComponent,
   },
 
   data() {
     return {
       API_URL: 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses',
+      fetchError: false,
       goods: [],
       filteredGoods: [],
       cart: {
@@ -97,6 +101,7 @@ export default {
           resolve();
         })
         .catch((err) => {
+          this.fetchError = true;
           reject(err);
         });
       });

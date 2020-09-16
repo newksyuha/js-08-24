@@ -1,7 +1,6 @@
 <template>
     <main class="justify-content-between">
         <div class="goods-list">
-            <p v-if="!filteredGoods.length">Нет данных</p>
             <div class="goods-item" v-for="item in filteredGoods" :key="item.product_name">
                 <h3>{{item.product_name}}</h3>
                 <p>{{item.price}}</p>
