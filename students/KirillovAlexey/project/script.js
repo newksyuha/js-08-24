@@ -35,7 +35,7 @@ const app = new Vue({
     data: {
        goods: [],
         filteredGoods: [],
-        searchLine:'',
+        //searchLine:'',
         cart: [],
 
     },
@@ -47,6 +47,11 @@ const app = new Vue({
     },
     computed: {
 
+       /* filtered() {
+            console.log('hello');
+            console.log(this.filteredItems);
+            return filteredItems;
+        }*/
     },
     methods: {
         fetchGoods() {
@@ -62,10 +67,10 @@ const app = new Vue({
                     });
             });
         },
-        filter() {
+        /*filter() {
             const regexp = new RegExp(this.searchLine, 'i');
             this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name));
-        },
+        },*/
         fetchCart() {
 
             new Promise((resolve, reject) => {
@@ -80,7 +85,71 @@ const app = new Vue({
                     });
             });
         },
+        onChildUpdate(changed){
+            console.log('here' + changed)
+            this.filteredGoods = changed;
+        }
     }
+
+
+});
+
+Vue.component('goods-list', {
+    props: ['goods'],
+    template: `
+    <div class="goods-list">
+      <goods-item v-for="good in goods" v-bind:good="good"></goods-item>
+    </div>
+  `
+});
+
+Vue.component('goods-item', {
+    props: ['good'],
+    template: `
+    <div class="goods-item">
+      <h3>{{ good.product_name }}</h3>
+      <p>{{ good.price }}</p>
+    </div>
+  `
+});
+
+Vue.component('empty',{
+   props:['filtered'],
+   template:`
+   <p v-if="filtered.length==0">Нет данных</p>
+   `
+});
+
+/*
+<!--<input type="text" class="goods-search" v-model = "searchLine"/>
+        <button class="search-button" type="button" @click="filter">Искать</button>-->
+ */
+Vue.component('search', {
+
+    data() {
+        return {
+            filteredItems: [],
+            searchText: ''
+        }
+    },
+    props:['items'],
+   template:`
+   <div class="search">
+        <input type="text" class="goods-search" v-model = "searchText"/>
+        <button class="search-button" type="button" @click="filter">Искать</button>
+   </div>
+   `
+   ,
+   methods: {
+       filter() {
+           const regexp = new RegExp(this.searchText, 'i');
+
+
+           this.filteredItems = this.items.filter(item => regexp.test(item.product_name));
+           this.$emit('update', this.filteredItems)
+           console.log(this.filteredItems);
+       },
+   }
 
 
 });
