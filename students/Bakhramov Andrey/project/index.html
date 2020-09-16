@@ -8,13 +8,36 @@
 
 </head>
 <body>
+  <div id="app">
     <header>
-        <button class="cart-button" type="button" name="cart-basket">Корзина</button>
-        <div class="cart-list"></div>
+      <p> Total shop cost - {{total }}      Search: </p>
+      <input type="text" class="search" v-model="searchText" />
+      <button type="button" class="cart-button" @click="isBasketVisible = !isBasketVisible">Корзина</button>
+
+
+      <div v-if="isBasketVisible" class="cart-list">
+          <div class="basket-item" v-for="basketItem in basket" >
+              <h4>{{ basketItem.product_name }}</h4>
+              <p>{{ basketItem.price }}</p>
+              <button @click="removeFromBasket(basketItem.id_product)">Удалить</button>
+          </div>
+          <div >Basket cost - {{ totalBasket }}</div>
+      </div>
+
       </header>
       <main>
-        <div class="goods-list"></div>
+
+        <div class="goods-list" v-if="filteredGoods.length">
+          <div class="goods-item" v-for="good in filteredGoods">
+            <div class="goods-img"></div>
+            <h3>{{ good.product_name }}</h3>
+            <p>{{ good.price }}</p>
+            <button @click="addToBasket(good)">Buy</button>
+          </div>
+        </div>
       </main>
-      <script src="script.js"></script>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="script.js"></script>
 </body>
 </html>
