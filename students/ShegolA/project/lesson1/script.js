@@ -1,6 +1,4 @@
 
-const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
-
 // function makeGETRequest(url, callback) {
 //         var xhr;
 
@@ -41,99 +39,174 @@ function makeGETRequest(url) {
         xhr.send();
     });
 }
-
+/*
 class GoodsItem {
-    constructor(title, price) {
-        this.product_name = title;
+    constructor({ id_product, product_name, price }) {
+        this.id = id_product;
+        this.title = product_name;
         this.price = price;
     }
     render() {
-        return `<div class="goods-item"><h3>${this.product_name}</h3><p>${this.price}</p></div>`;
+        return `
+      <div class="goods-item" data-id="${this.id}">
+        <h3>${this.title}</h3>
+        <p>${this.price}</p>
+        <button name="add-to-basket">Buy</button>
+      </div>
+    `;
     }
 }
 class GoodsList {
-    constructor() {
+    constructor(basket) {
+        this.basket = basket;
         this.goods = [];
+        this.filteredGoods = [];
+        this.fetchGoods()
+            .then(() => {
+                this.render();
+            })
+            .catch((err) => {
+                console.log('[ERROR]', err);
+            });
+        document.querySelector('.goods-list').addEventListener('click', (event) => {
+            if (event.target.name === 'add-to-basket') {
+                const id = event.target.parentElement.dataset.id;
+                const item = this.goods.find((goodsItem) => goodsItem.id_product === parseInt(id));
+                this.basket.addItem(item);
+            }
+        });
+        document.querySelector('.search').addEventListener('input', (event) => {
+            this.filterGoods(event.target.value);
+        });
     }
-    fetchGoods(cb) {
-        makeGETRequest(`${API_URL}/catalogData.json`).then((goods) => {
-            this.goods = JSON.parse(goods);
-            cb();
-        })
+    fetchGoods() {
+        return new Promise((resolve, reject) => {
+            sendRequest('/catalogData.json')
+                .then((goods) => {
+                    this.goods = goods;
+                    this.filteredGoods = goods;
+                    resolve();
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        });
+    }
+    total() {
+        return this.goods.reduce((acc, cur) => acc + cur.price, 0);
+    }
+    filterGoods(value) {
+        const regexp = new RegExp(value, 'i');
+        this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name));
+        this.render();
     }
     render() {
-        let listHtml = '';
-        this.goods.forEach(good => {
-            const goodItem = new GoodsItem(good.product_name, good.price);
-            listHtml += goodItem.render();
+        const goodsList = this.filteredGoods.map(item => {
+            const goodsItem = new GoodsItem(item);
+            return goodsItem.render();
         });
-        document.querySelector('.goods-list').innerHTML = `<h2>Товары</h2> ${listHtml}`
-    }
-
-    calculateTotalCost () {
-        let totalCost=0;
-        this.goods.forEach((good) =>{
-            console.log(good.price);
-            totalCost += good.price;
-        });
-        console.log(totalCost);
+        document.querySelector('.goods-list').innerHTML = goodsList.join('');
     }
 }
 
 //---------------------------------------------------------------------------
-let myGoodList = new GoodsList();
-
-myGoodList.fetchGoods(() => {
-    myGoodList.render();
-});
-// console.log(myGoodList);
-
-
-
-myGoodList.calculateTotalCost()
 
 //--------------------------------------------------------------------------
 class Basket {
     constructor() {
-        this.basketGoods = [];
+        this.goods = [];
     }
-    fetchBasket(cb) {
-        makeGETRequest(`${API_URL}/getBasket.json`).then((goods) => {
-            this.basketGoods = JSON.parse(goods);
-            console.log(this.basketGoods);
-            cb();
-        })
+    fetchGoods() {
     }
-
+    addItem(item) {
+        const itemIndex = this.goods.findIndex((goodsItem) => goodsItem.id_product === item.id_product);
+        if (itemIndex !== -1) {
+            this.goods[itemIndex].quantity++;
+        } else {
+            this.goods.push({ ...item, quantity: 1 });
+        }
+        console.log(this.goods);
+    }
+    removeItem(id) {
+        const itemIndex = this.goods.findIndex((goodsItem) => goodsItem.id_product === id);
+        if (itemIndex !== -1) {
+            this.goods.splice(itemIndex, 1);
+        }
+    }
+    getBasketItems() {
+        return this.goods;
+    }
+    total() {
+    }
     render() {
-        let listHtml = '';
-        this.basketGoods.contents.forEach(good => {
-            const basketItem = new BasketItem(good.product_name, good.price,good.quantity);
-            listHtml += basketItem.render();
-        });
-        document.querySelector('.goods-basket').innerHTML = `<h2>Корзина</h2> ${listHtml}`;
     }
-    // addToBasket(cb) {
-    //     makeGETRequest(`${API_URL}/addToBasket.json`).then()
-    // }
 }
 class BasketItem {
-    constructor(product_name, price, quantity) {
-        this.product_name = product_name;
-        this.price = price;
-        this.quantity = quantity;
+    constructor(item, basket) {
+        this.item = item;
+        this.basket = basket;
     }
-    summ() {
-        return this.price*this.quantity;
+    addItem() {
+        this.basket.addItem(this.item.id);
+    }
+    removeItem() {
+        this.basket.removeItem(this.item.id);
+    }
+    add() {
+        this.item.quantity += 1;
     }
     render() {
-        return `<div class="basket-list"><h3>${this.product_name}</h3><p>${this.price} <b>${this.quantity} </b></p></div>`;
     }
 }
+const basket = new Basket();
+const goodsList = new GoodsList(basket);
+*/
 
-let myBasket = new Basket();
-
-myBasket.fetchBasket(() => {
-    myBasket.render();
+const app = new Vue({
+    el: '#app',
+    data: {
+        goods: [],
+        filteredGoods: [],
+        searchLine: '',
+        cart: [
+            {product_name: 'Клавиатура', price: '1500', quantity: 1},
+            {product_name: 'Usb-провод', price: '200', quantity: 2},
+        ],
+        isVisibleCart: false,
+        API_URL: 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses',
+        emptyGoodsListMessage: 'No data!',
+    },
+    created() {
+        this.fetchGoods()
+    },
+    computed: {
+        totalPrice() {
+            return this.goods.reduce((acc, good) => acc + good.price, 0)
+        },
+        checkGoodsListData() {
+            return this.filteredGoods.length
+        },
+    },
+    methods: {
+        fetchGoods() {
+            fetch(`${this.API_URL}/catalogData.json`)
+                .then(goods => goods.json())
+                .then(goods => this.goods = goods)
+                .then(goods => this.filteredGoods = goods)
+        },
+        filterGoods() {
+            const regexp = new RegExp(this.searchLine, 'i')
+            this.filteredGoods = this.goods.filter((good) => {
+                return regexp.test(good.product_name)
+            })
+        },
+        showCart() {
+            this.isVisibleCart ? this.isVisibleCart = false : this.isVisibleCart = true;
+        }
+    }
 });
-console.log(myBasket);
+
+
+
+
+
