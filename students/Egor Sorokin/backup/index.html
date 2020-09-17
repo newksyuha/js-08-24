@@ -16,11 +16,11 @@
             </header>
             <main class="justify-content-between">
                 <div class="goods-list">
-                    <p v-if="filteredGoods.length == 0">Нет данных</p>
+                    <p v-if="!filteredGoods.length">Нет данных</p>
                     <div class="goods-item" v-for="item in filteredGoods">
                         <h3>{{item.product_name}}</h3>
                         <p>{{item.price}}</p>
-                        <button class="addCart" type="button">To Cart</button>
+                        <button class="addCart" type="button" @click="addToCart(item)">To Cart</button>
                     </div>
                 </div>
             </main>

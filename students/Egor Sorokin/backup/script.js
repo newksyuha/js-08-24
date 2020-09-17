@@ -64,7 +64,7 @@ const app = new Vue ({
     this.fetchGoods();
   },
 
-  updated() {
+/*  updated() {
     let i = 0;
     document.querySelectorAll('.addCart').forEach(button => {
       let a = (index) => {let add = (eventObj) => {this.addToCart(this.goods[index]);}; 
@@ -72,7 +72,7 @@ const app = new Vue ({
       button.addEventListener('click', a(i))
       i++;
     })
-  },
+  },*/
 
   computed: {
     total() {
