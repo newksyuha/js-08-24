@@ -5,7 +5,7 @@ body {
 
 header {
     background-color: rgb(218, 217, 216);
-    min-height: 100px;
+    min-height: 200px;
     padding: 20px 70px;
     box-sizing: border-box;
     vertical-align: middle;
