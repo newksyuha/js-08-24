@@ -12,24 +12,19 @@
 
 <div id="app">
     <header>
-        <!--<input type="text" class="goods-search" v-model = "searchLine"/>
-        <button class="search-button" type="button" @click="filter">Искать</button>-->
-        <search v-bind:items="goods" @update="onChildUpdate"></search>
-
+        <input type="text" class="goods-search" v-model = "searchLine"/>
+        <button class="search-button" type="button" @click="filter">Искать</button>
         <button class="cart-button" type="button" @click="fetchCart">Корзина</button>
     </header>
     <main>
 
-       <!-- <div class="goods-list">
+        <div class="goods-list">
             <div class="goods-item" v-for="good in filteredGoods">
                 <h3>{{ good.product_name }}</h3>
                 <p>{{ good.price }}</p>
             </div>
             <p v-if="filteredGoods.length == 0">Нет данных</p>
-        </div>-->
-
-        <goods-list v-bind:goods="filteredGoods"></goods-list>
-        <empty :filtered="filteredGoods"></empty>
+        </div>
 
         <div class="cart" v-if = "cart.isVisibleCart">
             <h3>Cart:</h3>
