@@ -57,12 +57,13 @@ hr {
 .header-btn {
   background: #05296E;
   border: none;
-  padding: .2em 1em;
+  padding: .2em 2em;
   border-radius: 5px;
   color: #fff;
   font-size: 1.2em;
   line-height: 1.5em;
   cursor: pointer;
+  box-shadow: 0 0 0px 2px #a64800;
   transition: background-color .3s ease;
 }
 
@@ -78,31 +79,6 @@ hr {
 .header-btn_small {
 	font-size: 1em;
 	line-height: 1.2em;
-}
-
-.btns-wrp {
-  display: flex;
-  justify-content: space-around;
-  padding: 2em;
-  box-shadow: 0 3px 12px 5px;
-  position: sticky;
-  top: 0;
-  background: #6B8FD4;
-}
-
-.fetch-btn {
-  border: none;
-  padding: 1em;
-  border-radius: 8px;
-  background: #FFDC40;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color .3s ease;
-}
-
-.fetch-btn:hover {
-  background: #A64800;
-  color: #fff;
 }
 
 .goods-item {
@@ -159,12 +135,13 @@ hr {
 }
 
 .total-price {
+  width: 100%;
   padding: .5em;
   text-align: center;
   background: #A64800;
   color: #fff;
+  box-sizing: border-box;
   font-size: x-large;
-  margin: 1%;
 }
 
 .cart-wrp {
@@ -182,11 +159,6 @@ hr {
   flex-wrap: wrap;
 }
 
-.cart_empty {
-  padding: 1em;
-  font-size: 1.5em;
-}
-
 .cart__item {
   width: 100%;
   background: #dfba13;
@@ -196,6 +168,10 @@ hr {
   justify-content: space-around;
   flex-wrap: wrap;
   align-items: center;
+}
+
+.cart_empty {
+  font-size: 1.2em;
 }
 
 @media screen and (max-width: 768px) {
