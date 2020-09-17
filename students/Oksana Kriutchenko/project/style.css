@@ -5,7 +5,7 @@ body {
 
 header {
     background-color: rgb(218, 217, 216);
-    min-height: 200px;
+    min-height: 100px;
     padding: 20px 70px;
     box-sizing: border-box;
     vertical-align: middle;
@@ -50,6 +50,14 @@ button:active {
     text-align: center;
     background-color: #ccc;
 }
+.goods-list-empty{
+    width: 30%;
+    padding: 20px;
+    background-color: rgb(238, 52, 52);
+    border: 2px solid rgb(14, 0, 0);
+    border-radius: 10px;
+    text-align: center;
+}
 button {
 background-color: rgb(248, 124, 124);
 }
@@ -75,15 +83,13 @@ background-color: rgb(248, 124, 124);
 .total {
     text-align: center;
 }
-.basketPanel {
-    width: 30%;
+.basket {
+    width: 20%;
     min-height: 100px;
-    background-color: #fff;
+    background-color: rgb(238, 227, 227);
+    text-align: center;
+    padding: 20px;
     position: absolute;
-    top: 75px;
+    top: 100px;
     right: 10px;
-}
-.table-hover{
-    border: #000;
-
 }

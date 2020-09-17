@@ -30,6 +30,8 @@ const app = new Vue({
   data: {
     goods: [],
     searchText: '',
+    isBasketVisible: false,
+    basket: [],
   },
   created() {
     this.fetchGoods();
@@ -39,12 +41,12 @@ const app = new Vue({
       const regexp = new RegExp(this.searchText, 'i');
       return this.goods.filter(item => regexp.test(item.product_name));
     },
-    total() {
+        total() {
       return this.goods.reduce((acc, cur) => acc + cur.price, 0);
     },
   },
   methods: {
-    fetchGoods() {
+     fetchGoods() {
       return new Promise((resolve, reject) => {
         makeGETRequest('/catalogData.json')
           .then((goods) => {
@@ -56,13 +58,11 @@ const app = new Vue({
           });
       });
     },
-
+    addToBasket(item) {
+      this.basket.push(item);
+    },
+    removeFromBasket(id) {
+      this.basket = this.basket.filter(({ id_product }) => id_product !== id);
+    },
   },
 });
-let buttonBasket = document.querySelector('.cart-button');
-buttonBasket.addEventListener('click', buttonBasketClickHandler);  
-
-function buttonBasketClickHandler(event) {
-    let basketTable = document.querySelector('table');
-    basketTable.classList.toggle('hidden');
-} 

@@ -14,46 +14,31 @@
 
     <div id="app">
         <header>
+       
             <input type="text" class="search" v-model="searchText" />
             <button type="button" class="search-button">Искать</button>
-            <button type="button" class="cart-button" @click="isVisibleCart">Корзина</button>
-            <div class="basketPanel" style="display: none">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Имя</th>
-                            <th scope="col">Цена</th>
-                            <th scope="col">Количество</th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="2" scope="row">Итого:</th>
-                            <td colspan="3">
-                                <span class="total">{{ total }}</span>
-                                <i class="fas fa-ruble-sign"></i>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
+           <div v-if="isBasketVisible" class="basket">
+                <div class="basket__item" v-for="basketItem in basket" >
+                    <h4>{{ basketItem.product_name }}</h4>
+                    <p>{{ basketItem.price }}</p>
+                    <button @click="removeFromBasket(basketItem.id_product)">Удалить</button>
+                </div></div>
+                <button type="button" class="cart-button" @click="isBasketVisible = !isBasketVisible">Корзина</button>
         </header>
         <main>
             <div class="goods-list">
                 <div class="goods-item" v-for="item in filteredGoods">
                     <h3>{{ item.product_name }}</h3>
                     <p>{{ item.price }}</p>
-                    <button name="add-to-basket" class="addToBasket">Добавить</button>
+                   <button @click="addToBasket(item)">Добавить</button>
                 </div>
+                <div v-if="!filteredGoods.length" class="goods-list-empty">
+                    <span>Нет данных</span>
+                  </div>
             </div>
         </main>
         <div class="total"><h3>{{ total }}</h3></div>
-        <div v-else class="goods-list">
-            <span>Нет данных</span>
-          </div>
+        
     </div>
 
 </body>
