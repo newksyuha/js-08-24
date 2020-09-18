@@ -10,20 +10,31 @@
 
 <body>
     <div class="Container">
-        <header class="header-page">
-            <input type="text" class="goods-search" />
-            <button class="search-button" type="button">Искать</button>
-            <button class="cart-button" type="button">Корзина</button>
-        </header>
-        <main class="main-page">
-            <div class="goods-list">
-                <div class="goods-item"></div>
-                <div class="goods-item"></div>
-                <div class="goods-item"></div>
-                <div class="goods-item"></div>
+        <div id="app">
+            <header class="header-page">
+                <input type="text" class="search" v-model="searchText">
+                <button class="search-button" type="button" @click="filterGoods">Искать</button>
+                <button class="cart-button" type="button" @click="toggleCartVisibility">Корзина</button>
+            </header>
+            <main class="main-page">
+                <div class="goods-list">
+                    <div class="goods-item" v-for="good in filteredGoods">
+                        <h3>{{ good.product_name }}</h3>
+                        <p>{{ good.price }}</p>
+                    </div>
+                </div>
+            </main>
+            <div class="cart-list" v-if="isVisibleCart">
+                <div class="cart-item" v-for="cartItem in cart.items">
+                    <h3>{{cartItem.item.product_name}}</h3>
+                    <p>{{cartItem.item.price}}</p>
+                    <button class="cart-count-button" type="button">-</button>
+                    <p>{{cartItem.count}}</p><button class="cart-count-button" type="button">+</button>
+                </div>
             </div>
-        </main>
+        </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
     <script src="../Project/script.js"></script>
 </body>
 
