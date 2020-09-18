@@ -96,11 +96,46 @@ class Basket {
   }
 }
 
+<<<<<<< Updated upstream
 class BasketItem {
   constructor(item, basket) {
     this.item = item;
     this.basket = basket;
   }
+=======
+Vue.component('goods-list', {
+  props: ['goods'],
+  template: `
+  <div v-if="!goods.lenght" class="goods-list">
+    <div class="goods-item" v-for="item in goods" v-bind:key="item.id_product">
+      <h3>{{ item.product_name }}</h3>
+      <p>{{ item.price }}</p>
+      <button @click="addToBasket(item)" class="cart-button">Buy</button>
+    </div>
+  </div>
+  <div v-else class="goods-list__empty">Нет данных</div>
+  `
+})
+
+Vue.component('basket', {
+  props: ['basket', 'isBasketVisible'],
+  template: `
+    <div v-if="isBasketVisible" class="basket">
+      <div class ="basket-item" v-for="basketItem in basket" v-bind:key="basket.id_product">
+        <h3>{{ basketItem.product_name }}</h3>
+        <p>{{ basketItem.price }}</p>
+      <button @click="removeFromBasket(basketItem.id_product)" class="cart-button">Удалить</button>
+      </div>
+      </div>
+  `,
+  /* */
+  methods:{
+    removeFromBasket(id){
+      console.log('remove from basket', id); 
+    }
+  },
+});
+>>>>>>> Stashed changes
 
   addItem() {
     this.basket.addItem(this.item.id);
