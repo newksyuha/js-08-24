@@ -4,7 +4,7 @@
         <FetchErrorComponent :fetchError="fetchError" />
         <HeaderComponent>
             <SearchComponent v-on:filter-goods="filterGoods($event)" /> 
-            <CartComponent :cart="cart" />
+            <CartComponent :cart="cart" @cart-item-deleted="removeFromCart($event)" />
         </HeaderComponent>
         <MainComponent :filteredGoods="filteredGoods" v-on:item-to-add="addToCart($event)" />
         <div class="total">{{total}}</div>
@@ -19,6 +19,8 @@ import MainComponent from './components/Main.vue';
 import CartComponent from './components/CartComponent.vue';
 import SearchComponent from './components/Search.vue';
 
+const API = 'http://localhost:3000';
+
 export default {
   name: 'App',
   components: {
@@ -31,7 +33,6 @@ export default {
 
   data() {
     return {
-      API_URL: 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses',
       fetchError: false,
       goods: [],
       filteredGoods: [],
@@ -50,6 +51,7 @@ export default {
 
   created() {
     this.fetchGoods();
+    this.fetchCart();
   },
 
 
@@ -61,40 +63,49 @@ export default {
 
       this.increaseAmount = function () {
         this.count++;
+
+        fetch(`${API}/changeAmountInCart`, {
+          method: 'POST',
+          body: JSON.stringify({changeId: catalogElement.id, newCount: this.count}),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(() => {
+            //this.count++;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
 
       this.reduceAmount = function () {
         if (this.count != 1) {
           this.count--;
+
+          fetch(`${API}/changeAmountInCart`, {
+          method: 'POST',
+          body: JSON.stringify({changeId: catalogElement.id, newCount: this.count}),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(() => {
+            //this.count++;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         }
       }
     },
 
-    sendRequest(url) {
-      return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest;
-      
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4) {
-
-              if (xhr.status === 200) {
-                resolve(JSON.parse(xhr.responseText));
-              } else {
-                reject(xhr.responseText);
-              }
-
-            }
-        }
-
-        xhr.open('GET', `${this.API_URL}${url}`, true);
-      
-        xhr.send();
-    });
-    },
-
     fetchGoods() {
       return new Promise ((resolve, reject) => {
-        this.sendRequest('/catalogData.json')
+       fetch(`${API}/data`)
+        .then((res) => {
+          return res.json();
+        })
         .then((goods) => {
           this.goods = goods;
           this.filteredGoods = goods;
@@ -107,6 +118,25 @@ export default {
       });
     },
 
+    fetchCart() {
+      return new Promise ((resolve, reject) => {
+       fetch(`${API}/cart`)
+        .then((res) => {
+          return res.json();
+        })
+        .then((cartContent) => {
+          cartContent.items.forEach(cartItem => {
+            const newItem = new this.CartElement (cartItem.item, cartItem.count);
+            this.cart.items.push(newItem)
+          });
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+      });
+    },
+
     addToCart(item) {
 
       const newItem = new this.CartElement (item, 1);
@@ -114,18 +144,46 @@ export default {
       let alreadyExist = false;
       
       this.cart.items.forEach(singleItem => {
-        if (singleItem.item.id_product === newItem.item.id_product) {
+        if (singleItem.item.id === newItem.item.id) {
           alreadyExist = true;
         }
       })
       if (!alreadyExist) {
-        this.cart.items.push(newItem);
+        fetch(`${API}/addToCart`, {
+          method: 'POST',
+          body: JSON.stringify(newItem),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(() => {
+            this.cart.items.push(newItem);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
+    },
+
+    removeFromCart(removedId) {
+      fetch(`${API}/removeFromCart`, {
+          method: 'POST',
+          body: JSON.stringify({removedId: removedId}),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(() => {
+            this.cart.items = this.cart.items.filter(({ item }) => item.id !== removedId);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     },
 
     filterGoods(searchText) {
       const regexp = new RegExp(searchText, 'i');
-      this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name));
+      this.filteredGoods = this.goods.filter(item => regexp.test(item.name));
     },
   }
 }
