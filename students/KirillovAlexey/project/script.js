@@ -1,150 +1,163 @@
 const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
-function makeGETRequest(url) {
-  
-  
-  return new Promise((resolve, reject) => {
-	  let xhr;
+/*
+/catalogData.json – получить список товаров;
+/getBasket.json – получить содержимое корзины;
+/addToBasket.json – добавить товар в корзину;
+/deleteFromBasket.json – удалить товар из корзины.
+ */
 
-  if (window.XMLHttpRequest) {
-    xhr = new XMLHttpRequest();
-  } else if (window.ActiveXObject) { 
-    xhr = new ActiveXObject("Microsoft.XMLHTTP");
-  }
+function sendRequest(url) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest;
 
-  /*xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      resolve(xhr.responseText);
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+
+                if (xhr.status === 200) {
+                    resolve(JSON.parse(xhr.responseText));
+                } else {
+                    reject(xhr.responseText);
+                }
+
+            }
+        }
+
+        xhr.open('GET', `${API_URL}${url}`, true);
+
+        xhr.send();
+    });
+}
+
+
+const app = new Vue({
+    el: '#app',
+    data: {
+       goods: [],
+        filteredGoods: [],
+        //searchLine:'',
+        cart: [],
+
+    },
+    created() {
+        this.fetchGoods();
+
+
+
+    },
+    computed: {
+
+       /* filtered() {
+            console.log('hello');
+            console.log(this.filteredItems);
+            return filteredItems;
+        }*/
+    },
+    methods: {
+        fetchGoods() {
+            return new Promise((resolve, reject) => {
+                sendRequest('/catalogData.json')
+                    .then((goods) => {
+                        this.goods = goods;
+                        this.filteredGoods = goods;
+                        resolve();
+                    })
+                    .catch((err) => {
+                        reject(err);
+                    });
+            });
+        },
+        /*filter() {
+            const regexp = new RegExp(this.searchLine, 'i');
+            this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name));
+        },*/
+        fetchCart() {
+
+            new Promise((resolve, reject) => {
+                sendRequest('/getBasket.json')
+                    .then((cart) => {
+                        this.cart = cart.contents;
+                        this.cart.isVisibleCart = true;
+                        resolve;
+                    })
+                    .catch((err) => {
+                       reject(err);
+                    });
+            });
+        },
+        onChildUpdate(changed){
+            console.log('here' + changed)
+            this.filteredGoods = changed;
+        }
     }
-  }*/
-  
-  xhr.onload = function() {
-      if (this.status != 200) {
-      let error = new Error(this.statusText);
-      error.code = this.status;
-      reject(error);
-      } else {
-		  resolve(xhr.responseText);
-	  }
-    };
 
-  xhr.open('GET', url, true);
-  xhr.send();
-	  });
-}
 
-class GoodsItem {
-  constructor(title, price) {
-    this.title = title;
-    this.price = price;
-  }
-  render() {
-    return `<div class="goods-item"><h3>${this.title}</h3><p>${this.price}</p></div>`;
-  }
-}
-
-class GoodsList {
-  constructor() {
-    this.goods = [];
-  }
-  fetchGoods(cb) {
-    makeGETRequest(`${API_URL}/catalogData.json`)
-	.then((text) => {
-  console.log(text);      
-  this.goods = JSON.parse(text);
-  cb();
-}, (error) => {
-  alert(`Rejected: ${error}`);
 });
-  }
-  render() {
-    let listHtml = '';
-    this.goods.forEach(good => {
-      const goodItem = new GoodsItem(good.product_name, good.price);
-      listHtml += goodItem.render();
-    });
-    document.querySelector('.goods-list').innerHTML = listHtml;
-  }
-  
-  getTotalPrice(){
-	  let totalPrice = 0;
-    this.goods.forEach(good => {
-      totalPrice += good.price;
-    });
-    document.querySelector('.total-price').innerHTML = totalPrice;
-  }
-}
 
-//пустые классы для Корзины товаров и Элемента корзины товаров
+Vue.component('goods-list', {
+    props: ['goods'],
+    template: `
+    <div class="goods-list">
+      <goods-item v-for="good in goods" v-bind:good="good"></goods-item>
+    </div>
+  `
+});
 
-class CartItem extends GoodsItem{
-	constructor (item, amount=1){
-		super(item.title, item.price);
-		this.amount = amount;
-		this.total = item.price*amount;
-	}
-	
-	render() {
-    return `<div class="goods-item"><h3>${this.title}</h3>
-	<p>${this.price}</p>
-	<p>${this.amount}</p>
-	<p>${this.total}</p>
-	</div>`;
-  }
-	
-}
+Vue.component('goods-item', {
+    props: ['good'],
+    template: `
+    <div class="goods-item">
+      <h3>{{ good.product_name }}</h3>
+      <p>{{ good.price }}</p>
+    </div>
+  `
+});
 
-class Cart {
-	constructor() {
-		this.items = [];
-		this.totalPrice = 0;
-	}
-	
-	
-	addItem(item, amount){
-		const cartItem = new CartItem(item, amount);
-		this.items.push(cartItem);
-		this.totalPrice += cartItem.total;
-	}
-	
-	delItem(index){
-		let max = this.items.length;
+Vue.component('empty',{
+   props:['filtered'],
+   template:`
+   <p v-if="filtered.length==0">Нет данных</p>
+   `
+});
 
-		if (Number.isInteger(index)){
-			if (max >= index + 1){
-				this.totalPrice -= this.items[index].total; 
-				this.items.splice(index, 1);
-				 
-			} else {
-				console.log("out of bounds");
-			}
-		}			
-	}
-	
-	render(){
-		let listHtml = '';
-		this.items.forEach(item => {
-      listHtml += item.render();
-	  
-    });
-    document.querySelector('.Cart').innerHTML = listHtml;
-	}
-	
-	
-}
+/*
+<!--<input type="text" class="goods-search" v-model = "searchLine"/>
+        <button class="search-button" type="button" @click="filter">Искать</button>-->
+ */
+Vue.component('search', {
+
+    data() {
+        return {
+            filteredItems: [],
+            searchText: ''
+        }
+    },
+    props:['items'],
+   template:`
+   <div class="search">
+        <input type="text" class="goods-search" v-model = "searchText"/>
+        <button class="search-button" type="button" @click="filter">Искать</button>
+   </div>
+   `
+   ,
+   methods: {
+       filter() {
+           const regexp = new RegExp(this.searchText, 'i');
 
 
-const list = new GoodsList();
-list.fetchGoods(() => {
-  list.render();
-  list.getTotalPrice();
+           this.filteredItems = this.items.filter(item => regexp.test(item.product_name));
+           this.$emit('update', this.filteredItems)
+           console.log(this.filteredItems);
+       },
+   }
+
+
 });
 
 
-/*const cart = new Cart();
-cart.addItem(list.goods[0], 2);
-cart.addItem(list.goods[1], 4);
-cart.render();*/
+
+
+
 
 
 

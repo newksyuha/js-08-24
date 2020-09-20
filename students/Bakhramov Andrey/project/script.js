@@ -1,63 +1,79 @@
-class GoodsItem {
-  constructor({ title, price }) {
-    this.title = title;
-    this.price = price;
-  }
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
-  render() {
-    return `
-       <div class="goods-item">
-        <div class="goods-img">
-        </div>
-        <h3>${this.title}</h3>
-        <p>${this.price}</p>
-      </div>
-    `;
-  }
-}
-
-class GoodsList {
-  constructor() {
-    this.goods = [];
-    this.fetchGoods();
-    this.sumGoodsList();
-  }
-
-  fetchGoods() {
-    this.goods = [
-      { title: 'Shirt', price: 150 },
-      { title: 'Socks', price: 50 },
-      { title: 'Jacket', price: 350 },
-      { title: 'Shoes', price: 250 },
-    ];
-  }
+function sendRequest(url) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest;
   
-  //метод подсчета суммы стоимости товаров
-  sumGoodsList() {
-      let sum = 0;
-      this.goods.forEach(items => {
-        sum+=items.price
-      })
-      console.log ('ОБщая сумма товаров - ', sum)
-  }
- 
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
 
-  render() {
-    const goodsList = this.goods.map(item => {
-      const goodsItem = new GoodsItem(item);
-      return goodsItem.render();
-    });
-    document.querySelector('.goods-list').innerHTML = goodsList.join('');
-  }
+          if (xhr.status === 200) {
+            resolve(JSON.parse(xhr.responseText));
+          } else {
+            reject(xhr.responseText);
+          }
+
+        }
+    }
+
+    xhr.open('GET', `${API}${url}`, true);
+  
+    xhr.send();
+  });
 }
 
-class BasketList {
-//пустой класс перечня товаров в корзине
-}
+const app = new Vue({
+  el: '#app',
 
-class BasketItem {
-  //пустой класс для отдельных товаров в корзине
-}
+  data: {
+    goods: [],
+    searchText: '',
+    isBasketVisible: false,
+    basket: [],
+  },
 
-const goodsList = new GoodsList();
-goodsList.render();
+  created() {
+    this.fetchGoods();
+  },
+
+  computed: {
+    filteredGoods() {
+      const regexp = new RegExp(this.searchText, 'i');
+      return this.goods.filter(item => regexp.test(item.product_name));
+    },
+    
+    total() {
+      return this.goods.reduce((acc, cur) => acc + cur.price, 0);
+    },
+
+    totalBasket() {
+      return this.basket.reduce((acc, cur) => acc + cur.price, 0);
+    },
+  },
+
+  methods: {
+    fetchGoods() {
+      return new Promise((resolve, reject) => {
+        sendRequest('/catalogData.json')
+          .then((goods) => {
+            this.goods = goods;
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    
+    addToBasket(item) {
+      if ((this.basket.indexOf(item)) === -1) {
+        this.basket.push(item)
+      };
+    },
+
+    removeFromBasket(id) {
+      this.basket = this.basket.filter(({ id_product }) => id_product !== id);
+    },
+  },
+
+});

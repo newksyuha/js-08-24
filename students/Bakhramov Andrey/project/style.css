@@ -9,6 +9,7 @@ header {
     height: 50px;
     display: flex;
     justify-content: flex-end;
+    align-items: baseline;
 }
 
 button {
@@ -42,4 +43,23 @@ button {
     margin: 8px;
     border:1px solid black;
     background:darkgray
+}
+
+.cart-list {
+    width: 400px;
+    border:1px solid black;
+    background:darkgray;
+    position: absolute;
+    margin-top: 50px;
+}
+
+.basket-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.basket-item__empty {
+    display: flex;
+    justify-content: space-between;
 }

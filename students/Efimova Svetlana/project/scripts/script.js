@@ -1,6 +1,28 @@
-class GoodsItem {
-    constructor({ title, price }) {
-      this.title = title;
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+
+function sendRequest(url) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest;
+    
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    resolve(JSON.parse(xhr.responseText));
+                } else {
+                    reject(xhr.responseText);
+                }
+            }
+        }
+        
+        xhr.open('GET', `${API}${url}`, true);
+
+        xhr.send();
+    });
+} 
+
+/* class GoodsItem {
+    constructor({ product_name, price }) {
+      this.title = product_name;
       this.price = price;
     }
 
@@ -15,10 +37,17 @@ class GoodsItem {
         `;
     }
 }
-
-class GoodsList {
+ */
+/* class GoodsList {
     constructor() {
       this.goods = [];
+      this.fetchGoods()
+        .then(() => {
+            this.render();
+        })
+        .catch((err) => {
+            console.log('[ERROR]', err);
+        });
     }
 
     fetchGoods() {
@@ -30,6 +59,22 @@ class GoodsList {
       ];
     }
 
+    fetchGoods() {
+        return new Promise((resolve, reject) => {
+            sendRequest(`/catalogData.json`)
+            .then((goods) => {
+                this.goods = goods;
+                this.render();
+                this.renderSum();
+                resolve();
+            })
+            .catch((err) => {
+                reject(err);
+            });
+        });
+        
+    } 
+
     render() {
     const goodsList = this.goods.map(item => {
         const goodItem = new GoodsItem(item);
@@ -39,22 +84,19 @@ class GoodsList {
     }
 
     countSum() {
-        let sum = 0;
-        for (let key in this.goods) {
-            sum += this.goods[key].price;
-        }
-        return sum;
+        return this.goods.reduce((acc, cur) => acc + cur.price, 0);
     }
 
     renderSum() {
         document.querySelector('.total').textContent = this.countSum();
     }
-}
+} */
 
-const goodsList = new GoodsList();
-goodsList.fetchGoods();
-goodsList.render();
-goodsList.renderSum();
+/* const goodsList = new GoodsList(); */
+
+/* goodsList.fetchGoods(); */
+/* goodsList.render(); */
+/* goodsList.renderSum(); */
 
 class BasketItem {
     constructor(title, price, quantity) {
@@ -92,4 +134,46 @@ class Basket {
     renderSum() {
         
     }
+}
+
+const app = new Vue({
+    el: '#app',
+    data: {
+        goods: [],
+        searchLine: ''
+    },
+    created(){
+        this.fetchGoods();
+    },
+    computed: {
+        filteredGoods(value) {
+            const regexp = new RegExp(this.searchLine, 'i');
+            return this.goods.filter(item => regexp.test(item.product_name));
+        },
+        countSum() {
+            return this.goods.reduce((acc, cur) => acc + cur.price, 0);
+        },
+    },
+    methods: {
+        fetchGoods() {
+            return new Promise((resolve, reject) => {
+                sendRequest(`/catalogData.json`)
+                .then((goods) => {
+                    this.goods = goods;
+                    resolve();
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+            }); 
+        },       
+    }
+});
+
+let buttonBasket = document.querySelector('.cart-button');
+buttonBasket.addEventListener('click', buttonBasketClickHandler);  
+
+function buttonBasketClickHandler(event) {
+    let basketTable = document.querySelector('table');
+    basketTable.classList.toggle('hidden');
 }

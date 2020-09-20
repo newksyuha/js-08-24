@@ -1,28 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>eShop</title>
 	<link rel="stylesheet" href="style.css">
+	<script defer src="vue.js"></script>
+	<script defer src="script.js"></script>
 </head>
 
 <body>
-	<h1 class="head-name">Интернет-магазин</h1>
-	<header class="head-basket">
-		<div class="container">
-			<div>
-				<button class="cart-button" data-load="response.json" onclick="loadBut();">Товары</button>
+	<div id="app">
+		<header>
+			<div class="container">
+				<search></search>
+				<button class="cart-button" v-bind:class="{activebutton: isVisibleCart}" v-on:click="viewCart">Корзина<span>{{totalPriceCoin}}</span></button>
 			</div>
-			<div>
-				<button class="cart-button" onclick="viewCart()">Корзина <span id="cartcoint"></span></button>
-			</div>
-		</div>
-	</header>
-	<main class="container">
-		<div class="goods-list"></div>
-		<div class="goods-total"></div>
-	</main>
-	<script src="script.js"></script>
-</body></html>
+		</header>
+		<main class="container">
+			<goods-list :goods="filteredGoods">
+				<template v-slot:title>
+					<h2>Товары в продаже</h2>
+				</template>
+				<template v-slot:nothing v-if="filteredGoods.length == 0">
+					<h3 class="goods-null">Нет данных / Товары не найдены</h3>
+				</template>
+			</goods-list>
+
+			<basket-list :goods="basketGoods" v-bind:class="{ active: isVisibleCart }">
+				<template v-slot:title>
+					<h2>Корзина</h2>
+				</template>
+				<template v-slot:totalCart><small class="totalCart">{{totalPriceMessage}}</small></template>
+			</basket-list>
+		</main>
+	</div>
+</body>
+
+</html>

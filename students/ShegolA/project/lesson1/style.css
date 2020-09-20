@@ -4,12 +4,11 @@
 }
 
 header{
-    border: 1px solid black;
     display: flex;
     justify-content: flex-end;
 }
 
-.h2{
+h2{
     color: brown;
 }
 
@@ -24,15 +23,10 @@ header{
 .goods-list{
     display: flex;
     justify-content: space-around;
+    margin-top: 25px;
+
 }
 
-.goods-item{
-    width: 150px;
-    height: 200px;
-    border: 1px solid black;
-    text-align: center;
-    margin-top: 5px;
-}
 .goods-basket{
     display: flex;
     justify-content: space-around;
@@ -45,3 +39,14 @@ header{
     text-align: center;
     margin-top: 5px;
 }
+
+.search{
+    display: flex;
+    justify-content: end;
+}
+
+.cart{
+    display: flex;
+    justify-content: space-around;
+}
+

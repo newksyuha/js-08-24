@@ -1,176 +1,151 @@
-const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses'
+Vue.component('search-text', {
+  data() {
+    return {}
+  },
+  props: ['searchLine', 'value'],
+  template: `
+    <input
+      class="search__text"
+      type="text"
+      v-bind="$attrs"
+      :value="value"
+      @input="$emit('input', $event.target.value)"
+    >
+  `
+})
 
-function makeGETRequestPromise(url) {
-  return new Promise((resolve, reject) => {
-    let xhr
-
-    if (window.XMLHttpRequest) {
-      xhr = new XMLHttpRequest()
-    } else if (window.ActiveXObject) {
-      xhr = new ActiveXObject("Microsoft.XMLHTTP")
+Vue.component('search-btn', {
+  data() {
+    return {
+      btnText: 'Search',
     }
+  },
+  template: `<button class="search__btn" @click="$emit('filter-goods')">{{ btnText }}</button>`
+})
 
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        resolve(JSON.parse(xhr.responseText))
-      }
+Vue.component('header-btn', {
+  data() {
+    return {
+      btnText: 'Cart',
     }
+  },
+  template: `<button class="header-btn" @click="$emit('show-cart')">{{ btnText }}</button>`
+})
 
-    xhr.open('GET', url, true)
-    xhr.send()
-  })
-}
+Vue.component('goods-item', {
+  data() {
+    return {}
+  },
+  props: ['item'],
+  template: `
+    <div class="goods-item">
+      <h4><b>Name: </b>{{ item.product_name }}</h4>
+      <p><b>Price: </b>{{ item.price }}&#36;</p>
+      <button class="header-btn header-btn_small" @click="$emit('add-to-cart', $event)">Buy</button>
+      <button class="header-btn header-btn_small" @click="$emit('remove-from-cart', $event)">Remove</button>
+    </div>
+  `
+})
 
-class GoodsItem {
-  constructor(product_id, product_name, price) {
-    this.id = product_id
-    this.title = product_name
-    this.price = price
-  }
+Vue.component('empty-goods-list', {
+  data() {
+    return {
+      emptyGoodsListMessage: 'No data!',
+    }
+  },
+  template: `<div class="goods-list goods-list_empty">{{ emptyGoodsListMessage }}</div>`
+})
 
-  render() {
-    return `
-      <div class="goods-item" data-id="${this.id}">
-        <h3><b>Name: </b>${this.title}</h3>
-        <p><b>Price: </b>${this.price}&#36;</p>
-        <button class="goods-item__btn" name="add-to-cart">Buy</button>
-        <button class="goods-item__btn" name="remove-from-cart">Remove</button>
-      </div>
-    `
-  }
-}
+Vue.component('cart-item', {
+  data() {
+    return {}
+  },
+  props: ['item'],
+  template: `
+    <div class="cart__item">
+      <h4><b>Name: </b>{{ item.product_name }}</h4>
+      <p><b>Price: </b>{{ item.price }}&#36;</p>
+      <p><b>Quantity: </b>{{ item.quantity }}</p>
+    </div>
+  `
+})
 
-class GoodsList {
-  constructor(cart) {
-    this.goods = []
-    this.filteredGoods = []
-    this.cart = cart
-    this.totalPrice = 0
-    this.fetchGoodsPromise()
-      .then(() => this.render())
+Vue.component('empty-cart', {
+  data() {
+    return {
+      emptyCartMessage: 'Cart is empty!',
+    }
+  },
+  template: `<div class="cart__item cart_empty">{{ emptyCartMessage }}</div>`
+})
 
-    document.querySelector('.goods-list').addEventListener('click', (event) => {
-      if (event.target.name === 'add-to-cart') {
-        const id = event.target.parentElement.dataset.id
-        const item = this.goods.find((goodsItem) => goodsItem.id_product === parseInt(id))
+Vue.component('total-price', {
+  data() {
+    return {
+      prefix: 'Total price: '
+    }
+  },
+  props: ['totalPrice'],
+  template: `<div class="total-price">{{ prefix }}{{ totalPrice }}&#36;</div>`
+})
 
-        this.cart.add({...item, quantity: 1})
-      }
-    })
-
-    document.querySelector('.goods-list').addEventListener('click', (event) => {
-      if (event.target.name === 'remove-from-cart') {
-        const id = event.target.parentElement.dataset.id
-        this.cart.remove(parseInt(id))
-      }
-    })
-
-    document.querySelector('.search').addEventListener('input', (event) => {
-      this.filterGoods(event.target.value)
-    })
-
-  }
-
-  fetchGoodsPromise() {
-    return new Promise((resolve, reject) => {
-      makeGETRequestPromise(`${API_URL}/catalogData.json`)
-      .then(res => {
-        this.goods = res
-        this.filteredGoods = res
-        resolve()
+const app = new Vue({
+  el: '#app',
+  data: {
+    API_URL: 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses',
+    API_URL_CATALOG: 'catalogData.json',
+    goods: [],
+    filteredGoods: [],
+    cart: [],
+    searchLine: '',
+    isVisibleCart: false,
+  },
+  created() {
+    this.fetchGoods()
+  },
+  computed: {
+    totalPrice() {
+      return this.goods.reduce((acc, good) => acc + good.price, 0)
+    },
+    checkGoodsListLength() {
+      return this.filteredGoods.length
+    },
+    checkCartLength() {
+      return this.cart.length
+    },
+  },
+  methods: {
+    fetchGoods() {
+      fetch(`${this.API_URL}/${this.API_URL_CATALOG}`)
+        .then(goods => goods.json())
+        .then(goods => this.goods = goods)
+        .then(goods => this.filteredGoods = goods)
+    },
+    filterGoods() {
+      const regexp = new RegExp(this.searchLine, 'i')
+      this.filteredGoods = this.goods.filter((good) => {
+        return regexp.test(good.product_name)
       })
-    })
+    },
+    addToCart(event) {
+      const matchId = parseInt(event.target.parentElement.id)
+      const matchGood = this.goods.find(good => good.id_product === matchId)
+      const itemIndex = this.cart.findIndex((good) => good.id_product === matchId);
+
+      if (itemIndex !== -1) {
+        this.cart[itemIndex].quantity++;
+      } else {
+        this.cart.push({ ...matchGood, quantity: 1 });
+      }
+    },
+    removeFromCart(event) {
+      const matchId = parseInt(event.target.parentElement.id)
+      const itemIndex = this.cart.findIndex((good) => good.id_product === matchId);
+      if (itemIndex !== -1) this.cart.splice(itemIndex, 1)
+
+    },
+    showCart() {
+      this.isVisibleCart = !this.isVisibleCart
+    }
   }
-
-  filterGoods(value) {
-    const regexp = new RegExp(value, 'i')
-    this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name))
-    this.render()
-  }
-
-  _calcTotalPrice() {
-    this.totalPrice = 0
-    this.filteredGoods.forEach((good) => this.totalPrice += good.price)
-  }
-
-  _renderTotalPrice() {
-    this._calcTotalPrice()
-    return `
-      <div class="total-price">
-        <b>Total price:</b> ${this.totalPrice}&#36;
-      </div>
-    `
-  }
-
-  render() {
-    let listHtml = '';
-    this.filteredGoods.forEach(good => {
-      const goodItem = new GoodsItem(good.id_product, good.product_name, good.price);
-      listHtml += goodItem.render();
-    });
-    document.querySelector('.goods-list').innerHTML = listHtml + this._renderTotalPrice();
-  }
-}
-
-class Cart {
-  constructor() {
-    this.cart = []
-  }
-
-  add(product) {
-    const itemIndex = this.cart.findIndex(item => item.id_product === product.id_product)
-    if (itemIndex !== -1) this.cart[itemIndex].quantity++
-    else this.cart.push(product)
-    this.render()
-  }
-
-  remove(id) {
-    const itemIndex = this.cart.findIndex(item => item.id_product === id)
-    if (itemIndex !== -1) this.cart.splice(itemIndex, 1)
-    this.render()
-  }
-
-  total() {
-    return this.cart
-  }
-
-  render() {
-    const cartPlace = document.querySelector('.cart')
-
-    if (cartPlace) cartPlace.innerHTML = ''
-
-    this.cart.forEach(item => {
-      cartPlace.innerHTML += new CartItem(item).render()
-    })
-  }
-}
-
-class CartItem {
-  constructor(item) {
-    this.title = item.product_name
-    this.price = item.price
-    this.quantity = item.quantity
-  }
-
-  addItem() {
-  }
-
-  removeItem() {
-  }
-
-  addQuantity() {
-  }
-
-  render() {
-    return `
-      <div class="cart__item">
-        <h4><b>Name: </b>${this.title}</h4>
-        <p><b>Price: </b>${this.price}&#36;</p>
-        <p class="quantity"><b>Quantity: </b>${this.quantity}</p>
-      </div>
-    `
-  }
-}
-
-const cart = new Cart()
-const list = new GoodsList(cart)
+})
