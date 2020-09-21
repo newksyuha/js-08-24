@@ -1,6 +1,14 @@
 <template>
   <div id="app">
-    <Header :basket="basket" />
+    <Header v-on:basket-toggle="handleBasketToggle">
+      <Basket
+        @remove-item="removeFromBasket"
+        :basket="basket"
+        :isBasketVisible="isBasketVisible"
+      />
+      <Search v-model="searchText" />
+    </Header>
+    <Error v-if="isError" />
     <GoodsList v-bind:goods="filteredGoods" />
   </div>
 </template>
@@ -8,22 +16,32 @@
 <script>
 import Header from './components/Header.vue'
 import GoodsList from './components/GoodsList.vue'
+import Search from "./components/Search.vue";
+import Basket from "./components/Basket.vue";
+import Error from "./components/Error.vue";
 
 const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 export default {
   name: 'App',
   components: {
-    Header, GoodsList
+    Header, 
+    GoodsList,
+    Search,
+    Basket,
+    Error,
   },
   data() {
     return{
         goods: [],
         basket: [],
+        searchText: "",
+        isBasketVisible: false,
         isError: false,
     };
   },
   created() {
     this.fetchGoods();
+    this.fetchBasket();
   },
   computed: {
     filteredGoods() {
@@ -37,7 +55,7 @@ export default {
   methods: {
      fetchGoods() {
          return new Promise((resolve, reject) => {
-        fetch(`${API}/catalogData.json`)
+        fetch(`${API}/data`)
           .then((res) => {
             return res.json();  
           })
@@ -51,14 +69,44 @@ export default {
           });
       }); 
     },
+     fetchBasket() {
+      return new Promise((resolve, reject) => {
+        fetch(`${API}/cart`)
+          .then((res) => {
+            return res.json();
+          })
+          .then((goods) => {
+            this.basket = goods;
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
     addToBasket(item) {
-      this.basket.push(item);
+      fetch(`${API}/addToCart`, {
+        method: 'POST',
+        body: JSON.stringify(item),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(() => {
+          this.basket.push(item);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     removeFromBasket(id) {
-      this.basket = this.basket.filter(({ id_product }) => id_product !== id);
+      this.basket = this.basket.filter(({ id }) => id !== removedId);
     },
-  }
-}
+    handleBasketToggle(){
+      this.isBasketVisible = !this.isBasketVisible;
+    },
+  },
+};
 </script>
 
 <style>
