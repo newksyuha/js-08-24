@@ -9,7 +9,7 @@
       <Search v-model="searchText" />
     </Header>
     <Error v-if="isError" />
-    <GoodsList v-bind:goods="filteredGoods" />
+    <GoodsList @add-item="basket.push(event)" :goods="filteredGoods" />
   </div>
 </template>
 
@@ -41,7 +41,7 @@ export default {
   },
   created() {
     this.fetchGoods();
-    this.fetchBasket();
+    
   },
   computed: {
     filteredGoods() {
@@ -55,7 +55,7 @@ export default {
   methods: {
      fetchGoods() {
          return new Promise((resolve, reject) => {
-        fetch(`${API}/data`)
+        fetch(`${API}/catalogData.json`)
           .then((res) => {
             return res.json();  
           })
@@ -69,38 +69,13 @@ export default {
           });
       }); 
     },
-     fetchBasket() {
-      return new Promise((resolve, reject) => {
-        fetch(`${API}/cart`)
-          .then((res) => {
-            return res.json();
-          })
-          .then((goods) => {
-            this.basket = goods;
-            resolve();
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
-    },
+     
     addToBasket(item) {
-      fetch(`${API}/addToCart`, {
-        method: 'POST',
-        body: JSON.stringify(item),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(() => {
-          this.basket.push(item);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
+      this.basket.push(item);
+      },
+    
     removeFromBasket(id) {
-      this.basket = this.basket.filter(({ id }) => id !== removedId);
+      this.basket = this.basket.filter(({ id_product }) => id_product !== id);
     },
     handleBasketToggle(){
       this.isBasketVisible = !this.isBasketVisible;
