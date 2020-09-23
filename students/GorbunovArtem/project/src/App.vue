@@ -1,0 +1,236 @@
+<template>
+  <div id="app">
+    <Header v-on:basket-toggle="handleBasketToggle">
+      <Basket
+        @remove-item="removeFromBasket"
+        :basket="basket"
+        :isBasketVisible="isBasketVisible"
+      />
+      <Search v-model="searchText" />
+    </Header>
+    <GoodsList @add-item="addToBasket" :goods="filteredGoods" />
+  </div>
+</template>
+
+<script>
+import Header from "./components/Header.vue";
+import GoodsList from "./components/GoodsList.vue";
+import Search from "./components/Search.vue";
+import Basket from "./components/Basket.vue";
+
+const API = "http://localhost:8080";
+
+export default {
+  name: "App",
+  components: {
+    Header,
+    GoodsList,
+    Search,
+    Basket,
+  },
+  data() {
+    return {
+      goods: [],
+      basket: [],
+      isBasketVisible: false,
+      searchText: "",
+    };
+  },
+  created() {
+    this.fetchGoods();
+    this.fetchBasket();
+  },
+  computed: {
+    filteredGoods() {
+      const regexp = new RegExp(this.searchText, "i");
+      return this.goods.filter((item) => regexp.test(item.name));
+    },
+    total() {
+      return this.goods.reduce((acc, cur) => acc + cur.price, 0);
+    },
+  },
+  methods: {
+    fetchGoods() {
+      return new Promise((resolve, reject) => {
+        fetch(`${API}/data`)
+          .then((res) => {
+            return res.json();
+          })
+          .then((goods) => {
+            this.goods = goods;
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    fetchBasket() {
+      return new Promise((resolve, reject) => {
+        fetch(`${API}/cart`)
+          .then((res) => {
+            return res.json();
+          })
+          .then((goods) => {
+            this.basket = goods;
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    addToBasket(item) {
+      fetch(`${API}/addToCart`, {
+        method: 'POST',
+        body: JSON.stringify(item),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(() => {
+          this.basket.push(item);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    removeFromBasket(removedId) {
+      this.basket = this.basket.filter(({ id }) => id !== removedId);
+    },
+    handleBasketToggle() {
+      this.isBasketVisible = !this.isBasketVisible;
+    },
+  },
+};
+</script>
+
+<style>
+/* цвета подобраны https://colorscheme.ru/ */
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+.search{
+    margin: 10px;
+    position: relative;
+}
+
+body {
+    background-color: #BF8F30;
+    margin: 0 auto;
+    font: normal 16px Roboto, Verdana, sans-serif;
+    line-height: 20px;
+    color: #333;
+    -webkit-text-size-adjust: none;
+}
+
+header {
+    background-color: #FFA900;
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 20px;
+    box-shadow: 0 3px 6px rgba(0,0,0,.2);
+}
+
+
+.basket{
+    background-color: #A66E00;
+    position: absolute;
+    padding: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,.2);
+    top: 70px;
+}
+
+
+
+ol, ul {
+    list-style: none;
+    display: block;
+}
+
+
+h1 {
+    font-weight: 500;
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+h3 {
+    font-weight: 500;
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-family: inherit;
+    color: #fff;
+    }
+
+p {
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    font-family: inherit;
+}
+
+/* feedback form 
+button {
+    text-align: center;
+    border: none;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+textarea {
+    height: 156px;
+    display: block;
+    font: normal 16px Roboto, Verdana, sans-serif;
+    resize: none;
+}
+
+.form-list {max-width: 800px;}
+	.form-list li {position: relative;}
+	.form-list li + li {margin-top: 24px;}
+	.form-list label {width: 204px; float: left; text-align: right; padding: 7px 36px 0 0;}
+	.form-list label + div {margin-left: 204px;}
+	.form-list button {height: 36px; font-size: 12px; line-height: 38px; color: #fff; text-transform: uppercase; padding: 0 24px; background: #FFCF73;}
+	.form-list button:hover {background:  #A66E00;}
+	.form-control {width: 100%; font-size: 16px; padding: 9px 12px 7px 10px; border: solid 1px #c6c6c6; -webkit-border-radius: 3px; border-radius: 3px; background: #fff;}
+	.form-control:focus {color:#3C464E; border:solid 1px #82B0D5; -webkit-box-shadow:0 0 9px rgba(123,198,254,0.37), inset 0 1px 2px rgba(91,114,132,0.3); box-shadow:0 0 9px rgba(123,198,254,0.37), inset 0 1px 2px rgba(91,114,132,0.3);}
+	input[type="text"].form-control {max-width: 400px;}
+*/
+/* error 
+.error {
+    max-width: 260px; 
+    display: none; 
+    font-size: 13px; 
+    line-height: 15px; 
+    color: #fff; 
+    position: absolute; 
+    left: 228px; top: calc(100% + 8px);
+    z-index: 100; padding: 6px 10px 7px; 
+    -webkit-border-radius: 6px; 
+    border-radius: 6px; 
+    background: #d99;
+}
+
+.error:before {width: 0; 
+    height: 0; 
+    content: ''; 
+    position: absolute; 
+    left: 15px; top: -7px; 
+    border-right: 8px solid transparent; 
+    border-left: 8px solid transparent; 
+    border-bottom: 8px solid #d99;
+}
+
+.form-control_error {border-color: #d99;}
+
+@media screen and (max-width: 768px) {
+	.form-list_contact {padding-bottom: 19px;}
+	.form-list li + li {margin-top: 19px;}
+	.form-list label {width: 100%; display: block; text-align: left; float: none; margin-bottom: 5px; padding: 0;}
+	.form-list label + div {margin-left: 0;}
+	.error {left: 0;}
+}*/
+</style>
