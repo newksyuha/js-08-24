@@ -8,81 +8,117 @@
       />
       <Search v-model="searchText" />
     </Header>
-    <Error v-if="isError" />
-    <GoodsList @add-item="basket.push(event)" :goods="filteredGoods" />
+    <GoodsList @add-item="addToBasket" :goods="filteredGoods" />
   </div>
 </template>
 
 <script>
-import Header from './components/Header.vue'
-import GoodsList from './components/GoodsList.vue'
+import Header from "./components/Header.vue";
+import GoodsList from "./components/GoodsList.vue";
 import Search from "./components/Search.vue";
 import Basket from "./components/Basket.vue";
-import Error from "./components/Error.vue";
 
-const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+const API = "http://localhost:3000";
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Header, 
+    Header,
     GoodsList,
     Search,
     Basket,
-    Error,
   },
   data() {
-    return{
-        goods: [],
-        basket: [],
-        searchText: "",
-        isBasketVisible: false,
-        isError: false,
+    return {
+      goods: [],
+      basket: [],
+      isBasketVisible: false,
+      searchText: "",
     };
   },
   created() {
     this.fetchGoods();
-    
+    this.fetchBasket();
   },
   computed: {
     filteredGoods() {
-      const regexp = new RegExp(this.searchText, 'i');
-      return this.goods.filter(item => regexp.test(item.product_name));
+      const regexp = new RegExp(this.searchText, "i");
+      return this.goods.filter((item) => regexp.test(item.name));
     },
-        total() {
+    total() {
       return this.goods.reduce((acc, cur) => acc + cur.price, 0);
     },
   },
   methods: {
-     fetchGoods() {
-         return new Promise((resolve, reject) => {
-        fetch(`${API}/catalogData.json`)
+    fetchGoods() {
+      return new Promise((resolve, reject) => {
+        fetch(`${API}/data`)
           .then((res) => {
-            return res.json();  
+            return res.json();
           })
           .then((goods) => {
             this.goods = goods;
             resolve();
           })
           .catch((err) => {
-            this.isError = true;
             reject(err);
           });
-      }); 
+      });
     },
-     
+    fetchBasket() {
+      return new Promise((resolve, reject) => {
+        fetch(`${API}/cart`)
+          .then((res) => {
+            return res.json();
+          })
+          .then((goods) => {
+            this.basket = goods;
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
     addToBasket(item) {
-      this.basket.push(item);
-      },
-    
-    removeFromBasket(id) {
-      this.basket = this.basket.filter(({ id_product }) => id_product !== id);
+      fetch(`${API}/addToCart`, {
+        method: 'POST',
+        body: JSON.stringify(item),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(() => {
+          this.basket.push(item);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
-    handleBasketToggle(){
+    removeFromBasket(removedId) {
+
+      fetch(`${API}/removeFromCart`, {
+        method: 'POST',
+        body: JSON.stringify({ id: removedId }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(() => {
+          this.basket = this.basket.filter(({ id }) => id !== removedId);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    
+    handleBasketToggle() {
       this.isBasketVisible = !this.isBasketVisible;
     },
   },
 };
 </script>
+
+
 
 <style>
 body {
@@ -132,8 +168,8 @@ button:active {
 }
 
 .goods-item {
-    height: 200px;
-    width: 250px;
+    height: 150px;
+    width: 150px;
     text-align: center;
     background-color: #ccc;
 }

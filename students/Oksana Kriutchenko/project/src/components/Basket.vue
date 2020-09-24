@@ -5,7 +5,7 @@
       v-for="basketItem in basket"
       v-bind:key="basketItem.id"
     >
-      <h4>{{ basketItem.product_name }}</h4>
+      <h4>{{ basketItem.name }}</h4>
       <p>{{ basketItem.price }}</p>
       <button @click="$emit('remove-item', basketItem.id)">Удалить</button>
     </div>
