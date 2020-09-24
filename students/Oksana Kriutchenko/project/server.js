@@ -9,6 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/data', (request, response) => {
+
     fs.readFile('./catalog.json', 'utf-8', (err, data) => {
         if (err) {
             console.log('readFile Error', err);
@@ -23,6 +24,7 @@ app.get('/data', (request, response) => {
 });
 
 app.get('/cart', (request, response) => {
+
     fs.readFile('./cart.json', 'utf-8', (err, data) => {
         if (err) {
             console.log('readFile Error', err);
@@ -37,6 +39,7 @@ app.get('/cart', (request, response) => {
 });
 
 app.post('/addToCart', (request, response) => {
+
     fs.readFile('./cart.json', 'utf-8', (err, data) => {
         if (err) {
             console.log('Something goes wrong');
@@ -56,6 +59,7 @@ app.post('/addToCart', (request, response) => {
 });
 
 app.post('/removeFromCart', (request, response) => {
+
     fs.readFile('./cart.json', 'utf-8', (err, data) => {
         if (err) {
             console.log('Something goes wrong');
@@ -73,6 +77,7 @@ app.post('/removeFromCart', (request, response) => {
         });
     });
 }),
+
 app.listen(3000, () => {
     console.log('Server is listening port 3000');
 });

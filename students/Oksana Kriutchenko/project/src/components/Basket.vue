@@ -17,4 +17,5 @@ export default {
     name: 'Basket',
     props: ['isBasketVisible', 'basket'],
 };
+
 </script>
