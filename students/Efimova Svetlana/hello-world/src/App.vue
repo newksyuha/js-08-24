@@ -14,7 +14,7 @@ import GoodsList from './components/GoodsList.vue'
 import Search from './components/Search.vue'
 import Basket from './components/Basket.vue'
 
-const API = 'http://localhost:3000';
+const API = 'http://localhost:3001';
 
 export default {
   name: 'App',

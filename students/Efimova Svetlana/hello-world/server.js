@@ -59,6 +59,6 @@ app.post('/addToCart', (request, response) => {
     });
 });
 
-app.listen(3000, () => {
+app.listen(3001, () => {
     console.log("server is listening port 3000");
 });
