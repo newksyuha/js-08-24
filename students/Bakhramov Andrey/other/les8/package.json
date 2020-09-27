@@ -1,0 +1,16 @@
+{
+  "name": "les8",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "jasmine": "^3.6.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "jasmine",
+    "init": "jasmine init"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
