@@ -98,82 +98,70 @@ function sendRequest(url) {
 /* goodsList.render(); */
 /* goodsList.renderSum(); */
 
-class BasketItem {
-    constructor(title, price, quantity) {
-        this.title = title;
-        this.price = price;
-        this.quantity = quantity;
-    }
-
-    render() {
-
-    }
-}
-
-class Basket {
-    constuctor() {
-        this.items = [];
-    }
-
-    render() {
-
-    }
-
-    addItems() {
-
-    }
-
-    deleteItems() {
-
-    }
-
-    countSum() {
-
-    }
-
-    renderSum() {
-        
-    }
-}
-
 const app = new Vue({
     el: '#app',
     data: {
         goods: [],
-        searchLine: ''
+        searchLine: '',
+        isBasketVisible: false,
+        basket: [],
+        filteredGoods: [],
+        isError: false
     },
     created(){
         this.fetchGoods();
     },
     computed: {
-        filteredGoods(value) {
+        /* filteredGoods(value) {
             const regexp = new RegExp(this.searchLine, 'i');
             return this.goods.filter(item => regexp.test(item.product_name));
-        },
+        }, */
         countSum() {
             return this.goods.reduce((acc, cur) => acc + cur.price, 0);
         },
     },
     methods: {
+        filterGoods() {
+            const regexp = new RegExp(this.searchLine, 'i');
+            this.filteredGoods = this.goods.filter(item => regexp.test(item.product_name));
+        },
         fetchGoods() {
             return new Promise((resolve, reject) => {
                 sendRequest(`/catalogData.json`)
                 .then((goods) => {
                     this.goods = goods;
+                    this.filteredGoods = goods;
                     resolve();
                 })
                 .catch((err) => {
                     reject(err);
+                    this.isError = true;
                 });
             }); 
-        },       
+        }, 
+        toggleBasketVisible() {
+            this.isBasketVisible = !this.isBasketVisible;
+        },
+        addToBasket(item) {
+            this.basket.push(item);
+        },
+        removeFromBasket(id) {
+            this.basket = this.basket.filter(({ id_product }) => id_product !== id)
+        }      
     }
 });
 
-let buttonBasket = document.querySelector('.cart-button');
-buttonBasket.addEventListener('click', buttonBasketClickHandler);  
+Vue.component('v-footer', {
+    props: ['isError'],
+    template: `
+        <p v-if="isError">ERROR</p>
+    `
+});
 
-function buttonBasketClickHandler(event) {
-    let basketTable = document.querySelector('table');
-    basketTable.classList.toggle('hidden');
-}
+Vue.component('v-search', {
+    props: ['searchLine','filterGoods'],
+    template: `
+        <input type="text" class="goods-search" v-model="searchLine"/>
+        <button class="search-button" type="button" v-on:click="filterGoods">Искать</button>
+    `
+})

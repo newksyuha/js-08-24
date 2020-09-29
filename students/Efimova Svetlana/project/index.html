@@ -9,46 +9,32 @@
 <body>
     <div id="app">
         <header>
-            <input type="text" class="goods-search" v-model="searchLine"/>
-            <button class="search-button" type="button">Искать</button>
-            <button class="cart-button" type="button">Корзина</button>
-            <table class="basket hidden">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Название</th>
-                        <th>Цена</th>
-                        <th>Количество</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="item in filteredGoods"> 
-                        <td></td>
-                        <td>{{ item.product_name }}</td>
-                        <td>{{ item.price }}</td>
-                        <td>1</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th colspan="2">Итого:</th>
-                        <th colspan="2" class="sum">{{ countSum }}</th>
-                    </tr>
-                </tfoot>
-            </table>
+            <v-search></v-search>
+            <!--<input type="text" class="goods-search" v-model="searchLine"/>
+            <button class="search-button" type="button" v-on:click="filterGoods">Искать</button> -->
+            
+            <button class="cart-button" type="button" v-on:click="toggleBasketVisible">Корзина</button>
+            <div class="basket" v-if="isBasketVisible">
+                <div class="basket-item" v-for="basketItem in basket">
+                    <h4>{{ basketItem.product_name }}</h4>
+                    <p>{{ basketItem.price }}</p>
+                    <button v-on:click="removeFromBasket(basketItem.id_product)">Удалить</button>
+                </div>
+            </div>
         </header>
         <main>
             <div class="goods-list">
-                <div class="goods-item" v-if="filteredGoods.length" v-for="item in filteredGoods">
+                <div class="goods-item" v-for="item in filteredGoods">
                     <h3>{{ item.product_name }}</h3>
                     <div class="goods-item-img"></div>
                     <p>{{ item.price }}</p>
-                    <button class="cart-button" type="button">Добавить</button>
+                    <button class="cart-button" type="button" v-on:click="addToBasket(item)">Добавить</button>
                 </div>
-                <p v-else>Нет данных</p>
+                <p v-if="!filteredGoods.length">Нет данных</p>
             </div>
             <span class="total">{{ countSum }}</span>
         </main>
+        <v-footer></v-footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="scripts/script.js"></script>
